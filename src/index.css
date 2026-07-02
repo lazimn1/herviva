@@ -1,8 +1,8 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-serif: "Cormorant Garamond", Georgia, serif;
-  --font-sans: "Jost", system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Jost', system-ui, sans-serif;
 
   --color-cream: #f7f3ed;
   --color-cream-dark: #ede6da;

@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { cartLineKey } from "../utils/formatPrice";
+import { createContext, useContext, useEffect, useState } from 'react';
+import { cartLineKey } from '../utils/formatPrice';
 
 const CartContext = createContext(null);
-const STORAGE_KEY = "herviva-cart";
+const STORAGE_KEY = 'herviva-cart';
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState(() => {
@@ -73,6 +73,6 @@ export function CartProvider({ children }) {
 
 export function useCart() {
   const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be used within CartProvider");
+  if (!ctx) throw new Error('useCart must be used within CartProvider');
   return ctx;
 }

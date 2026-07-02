@@ -1,26 +1,29 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from 'react';
 
 const slides = [
   {
-    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1800&q=80&fm=webp",
-    fallback: "https://via.placeholder.com/1800x1000?text=New+Season",
-    tag: "New Season",
-    title: "Effortless elegance,\ncrafted for every her",
-    sub: "Discover flowing silhouettes and timeless pieces that move with you.",
+    image:
+      'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1800&q=80&fm=webp',
+    fallback: 'https://via.placeholder.com/1800x1000?text=New+Season',
+    tag: 'New Season',
+    title: 'Effortless elegance,\ncrafted for every her',
+    sub: 'Discover flowing silhouettes and timeless pieces that move with you.',
   },
   {
-    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1800&q=80&fm=webp",
-    fallback: "https://via.placeholder.com/1800x1000?text=Fusion+Edit",
-    tag: "Fusion Edit",
-    title: "Where tradition\nmeets modern grace",
-    sub: "Contemporary kurtas and tunics reimagined for the woman of today.",
+    image:
+      'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1800&q=80&fm=webp',
+    fallback: 'https://via.placeholder.com/1800x1000?text=Fusion+Edit',
+    tag: 'Fusion Edit',
+    title: 'Where tradition\nmeets modern grace',
+    sub: 'Contemporary kurtas and tunics reimagined for the woman of today.',
   },
   {
-    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1800&q=80&fm=webp",
-    fallback: "https://via.placeholder.com/1800x1000?text=The+Collection",
-    tag: "The Collection",
-    title: "Your wardrobe,\nreimagined",
-    sub: "Premium fabrics, thoughtful details, and silhouettes made to last.",
+    image:
+      'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1800&q=80&fm=webp',
+    fallback: 'https://via.placeholder.com/1800x1000?text=The+Collection',
+    tag: 'The Collection',
+    title: 'Your wardrobe,\nreimagined',
+    sub: 'Premium fabrics, thoughtful details, and silhouettes made to last.',
   },
 ];
 
@@ -43,7 +46,7 @@ export default function Hero() {
   return (
     <section
       className="relative w-full overflow-hidden bg-olive"
-      style={{ height: "100svh", minHeight: "600px" }}
+      style={{ height: '100svh', minHeight: '600px' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -51,13 +54,18 @@ export default function Hero() {
         <div
           key={s.tag}
           className="absolute inset-0 transition-opacity duration-1000"
-          style={{ opacity: i === current ? 1 : 0, zIndex: i === current ? 1 : 0 }}
+          style={{
+            opacity: i === current ? 1 : 0,
+            zIndex: i === current ? 1 : 0,
+          }}
         >
           <img
             src={s.image}
             alt=""
-            onError={(e) => { e.target.src = s.fallback; }}
-            className={`h-full w-full object-cover ${i === current ? "animate-slow-zoom" : ""}`}
+            onError={(e) => {
+              e.target.src = s.fallback;
+            }}
+            className={`h-full w-full object-cover ${i === current ? 'animate-slow-zoom' : ''}`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/25 to-ink/10" />
         </div>
@@ -80,8 +88,18 @@ export default function Hero() {
               className="inline-flex items-center gap-2 rounded-full bg-terracotta px-7 py-3 text-sm font-medium tracking-wide text-cream no-underline transition-all hover:bg-terracotta/90 hover:shadow-lg"
             >
               Shop Now
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </a>
             <a
@@ -97,7 +115,8 @@ export default function Hero() {
       {/* Slide indicators */}
       <div className="absolute right-6 bottom-8 z-20 flex items-center gap-4 sm:right-12">
         <span className="text-xs tabular-nums text-cream/50">
-          {String(current + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
+          {String(current + 1).padStart(2, '0')} /{' '}
+          {String(slides.length).padStart(2, '0')}
         </span>
         <div className="flex gap-2">
           {slides.map((_, i) => (
@@ -108,8 +127,11 @@ export default function Hero() {
               onClick={() => setCurrent(i)}
               className="h-1.5 rounded-full transition-all duration-300"
               style={{
-                width: i === current ? "28px" : "6px",
-                backgroundColor: i === current ? "var(--color-terracotta)" : "rgba(247,243,237,0.4)",
+                width: i === current ? '28px' : '6px',
+                backgroundColor:
+                  i === current
+                    ? 'var(--color-terracotta)'
+                    : 'rgba(247,243,237,0.4)',
               }}
             />
           ))}

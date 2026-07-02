@@ -1,9 +1,21 @@
-import Logo from "./Logo";
+import Logo from './Logo';
 
 const footerLinks = {
-  Shop: ["New Arrivals", "Kurtas & Tunics", "Fusion Wear", "Occasion Edit", "Accessories"],
-  Help: ["Size Guide", "Shipping & Returns", "Care Instructions", "Contact Us", "FAQs"],
-  About: ["Our Story", "Sustainability", "Craftsmanship", "Careers", "Press"],
+  Shop: [
+    'New Arrivals',
+    'Kurtas & Tunics',
+    'Fusion Wear',
+    'Occasion Edit',
+    'Accessories',
+  ],
+  Help: [
+    'Size Guide',
+    'Shipping & Returns',
+    'Care Instructions',
+    'Contact Us',
+    'FAQs',
+  ],
+  About: ['Our Story', 'Sustainability', 'Craftsmanship', 'Careers', 'Press'],
 };
 
 export default function Footer() {
@@ -18,10 +30,11 @@ export default function Footer() {
               className="h-14 sm:h-16 lg:h-20 w-auto object-contain brightness-200 "
             />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-cream/60">
-              Elegant fusion wear for the modern woman. Crafted with care, designed to last, made for every her.
+              Elegant fusion wear for the modern woman. Crafted with care,
+              designed to last, made for every her.
             </p>
             <div className="mt-6 flex gap-3">
-              {["instagram", "facebook", "pinterest"].map((social) => (
+              {['instagram', 'facebook', 'pinterest'].map((social) => (
                 <a
                   key={social}
                   href="#"
@@ -36,7 +49,9 @@ export default function Footer() {
 
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-              <h4 className="text-xs tracking-[0.2em] text-cream/50 uppercase">{title}</h4>
+              <h4 className="text-xs tracking-[0.2em] text-cream/50 uppercase">
+                {title}
+              </h4>
               <ul className="mt-4 space-y-2.5">
                 {links.map((link) => (
                   <li key={link}>
@@ -58,8 +73,18 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} herviva. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-xs text-cream/40 no-underline hover:text-cream/70">Privacy Policy</a>
-            <a href="#" className="text-xs text-cream/40 no-underline hover:text-cream/70">Terms of Service</a>
+            <a
+              href="#"
+              className="text-xs text-cream/40 no-underline hover:text-cream/70"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="#"
+              className="text-xs text-cream/40 no-underline hover:text-cream/70"
+            >
+              Terms of Service
+            </a>
           </div>
         </div>
       </div>

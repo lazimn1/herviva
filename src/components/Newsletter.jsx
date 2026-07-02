@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export default function Newsletter() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
@@ -12,12 +12,15 @@ export default function Newsletter() {
   return (
     <section className="bg-terracotta py-20 sm:py-24">
       <div className="mx-auto max-w-2xl px-5 text-center sm:px-8">
-        <span className="text-xs tracking-[0.3em] text-cream/70 uppercase">Stay Connected</span>
+        <span className="text-xs tracking-[0.3em] text-cream/70 uppercase">
+          Stay Connected
+        </span>
         <h2 className="mt-3 font-serif text-3xl font-medium text-cream sm:text-4xl">
           Join the herviva circle
         </h2>
         <p className="mt-4 text-sm leading-relaxed text-cream/80">
-          Be the first to know about new arrivals, exclusive offers, and styling inspiration delivered to your inbox.
+          Be the first to know about new arrivals, exclusive offers, and styling
+          inspiration delivered to your inbox.
         </p>
 
         {submitted ? (
@@ -25,7 +28,10 @@ export default function Newsletter() {
             Welcome to the circle! Check your inbox for a little surprise.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-0">
+          <form
+            onSubmit={handleSubmit}
+            className="mt-8 flex flex-col gap-3 sm:flex-row sm:gap-0"
+          >
             <input
               type="email"
               required

@@ -88,8 +88,7 @@ export default function CartDrawer({
                     src={item.image}
                     alt={item.name}
                     onError={(e) => {
-                      e.target.src =
-                        'https://via.placeholder.com/80x100?text=Item';
+                      e.target.src = '/images/fallback.svg';
                     }}
                     className="h-24 w-20 rounded-xl object-cover"
                   />

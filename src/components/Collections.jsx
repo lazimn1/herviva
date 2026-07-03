@@ -3,8 +3,8 @@ const collections = [
     title: 'Kurtas & Tunics',
     desc: 'Flowing fabrics, artisanal prints',
     image:
-      'https://images.unsplash.com/photo-1583292655851-27f1e0f0b8e5?w=800&q=80&fm=webp',
-    fallback: 'https://via.placeholder.com/800x1000?text=Kurtas+%26+Tunics',
+      '/images/collection-1.webp',
+    fallback: '/images/fallback.svg',
     color: 'bg-sage/20',
     accent: 'text-sage-dark',
   },
@@ -12,8 +12,8 @@ const collections = [
     title: 'Fusion Wear',
     desc: 'East meets west, effortlessly',
     image:
-      'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=800&q=80&fm=webp',
-    fallback: 'https://via.placeholder.com/800x1000?text=Fusion+Wear',
+      '/images/collection-2.webp',
+    fallback: '/images/fallback.svg',
     color: 'bg-terracotta/15',
     accent: 'text-terracotta',
   },
@@ -21,8 +21,8 @@ const collections = [
     title: 'Occasion Edit',
     desc: 'Festive, formal & celebratory',
     image:
-      'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=80&fm=webp',
-    fallback: 'https://via.placeholder.com/800x1000?text=Occasion+Edit',
+      '/images/collection-3.webp',
+    fallback: '/images/fallback.svg',
     color: 'bg-burgundy/10',
     accent: 'text-burgundy',
   },
@@ -30,8 +30,8 @@ const collections = [
     title: 'Everyday Essentials',
     desc: 'Comfort meets quiet luxury',
     image:
-      'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&q=80&fm=webp',
-    fallback: 'https://via.placeholder.com/800x1000?text=Everyday+Essentials',
+      '/images/collection-4.webp',
+    fallback: '/images/fallback.svg',
     color: 'bg-tan/20',
     accent: 'text-ink',
   },

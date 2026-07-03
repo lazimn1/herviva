@@ -6,11 +6,10 @@ export default function BrandStory() {
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
               <img
-                src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80&fm=webp"
+                src="/images/brand-story-1.webp"
                 alt="Fabric detail"
                 onError={(e) => {
-                  e.target.src =
-                    'https://via.placeholder.com/600x800?text=Fabric+Detail';
+                  (e.target.src = '/images/fallback.svg');
                 }}
                 className="aspect-[3/4] rounded-2xl object-cover"
               />
@@ -18,8 +17,7 @@ export default function BrandStory() {
                 src="/brand-board.png"
                 alt="herviva brand"
                 onError={(e) => {
-                  e.target.src =
-                    'https://via.placeholder.com/600x800?text=Brand+Board';
+                  (e.target.src = '/images/fallback.svg');
                 }}
                 className="mt-8 aspect-[3/4] rounded-2xl object-cover"
               />

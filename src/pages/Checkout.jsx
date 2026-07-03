@@ -248,8 +248,7 @@ export default function Checkout() {
                     src={item.image}
                     alt=""
                     onError={(e) => {
-                      e.target.src =
-                        'https://via.placeholder.com/48x64?text=Item';
+                      e.target.src = '/images/fallback.svg';
                     }}
                     className="h-16 w-12 rounded-lg object-cover"
                   />

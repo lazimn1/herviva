@@ -160,7 +160,7 @@ app.post("/api/orders/create", async (req, res) => {
       order.razorpayOrderId = razorpayOrder.id;
       
       const { error: dbError } = await supabase.from('orders').insert([order]);
-      if (dbError) throw dbError;
+      if (dbError) throw new Error("DB Error: " + (dbError.message || JSON.stringify(dbError)));
 
       return res.json({
         orderId,
@@ -176,12 +176,12 @@ app.post("/api/orders/create", async (req, res) => {
     }
 
     const { error: dbError } = await supabase.from('orders').insert([order]);
-    if (dbError) throw dbError;
+    if (dbError) throw new Error("DB Error: " + (dbError.message || JSON.stringify(dbError)));
 
     res.json({ orderId, amount: total, status: "confirmed" });
   } catch (err) {
     console.error("Create order error:", err);
-    res.status(500).json({ error: "Failed to create order" });
+    res.status(500).json({ error: err.message || "Failed to create order" });
   }
 });
 

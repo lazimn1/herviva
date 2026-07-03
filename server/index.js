@@ -160,7 +160,10 @@ app.post("/api/orders/create", async (req, res) => {
       order.razorpayOrderId = razorpayOrder.id;
       
       const { error: dbError } = await supabase.from('orders').insert([order]);
-      if (dbError) throw new Error("DB Error: " + (dbError.message || JSON.stringify(dbError)));
+      if (dbError) {
+        const maskedKey = supabaseKey ? supabaseKey.substring(0, 10) + "..." : "null";
+        throw new Error(`DB Error: ${dbError.message || JSON.stringify(dbError)} | URL=[${supabaseUrl}] KEY=[${maskedKey}]`);
+      }
 
       return res.json({
         orderId,
@@ -176,7 +179,10 @@ app.post("/api/orders/create", async (req, res) => {
     }
 
     const { error: dbError } = await supabase.from('orders').insert([order]);
-    if (dbError) throw new Error("DB Error: " + (dbError.message || JSON.stringify(dbError)));
+    if (dbError) {
+      const maskedKey = supabaseKey ? supabaseKey.substring(0, 10) + "..." : "null";
+      throw new Error(`DB Error: ${dbError.message || JSON.stringify(dbError)} | URL=[${supabaseUrl}] KEY=[${maskedKey}]`);
+    }
 
     res.json({ orderId, amount: total, status: "confirmed" });
   } catch (err) {

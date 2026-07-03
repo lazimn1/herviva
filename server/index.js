@@ -30,7 +30,8 @@ const allowedOrigins = new Set([
   process.env.CORS_ORIGIN,
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://herviva.vercel.app"
+  "https://herviva.vercel.app",
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null
 ].filter(Boolean));
 
 app.use(

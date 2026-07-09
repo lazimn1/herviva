@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useRazorpay } from '../hooks/useRazorpay';
 import { createOrder, verifyPayment } from '../utils/api';
@@ -8,6 +9,7 @@ import { FREE_SHIPPING_MIN, SHIPPING_FLAT } from '../data/products';
 
 export default function Checkout() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { cart, subtotal, clearCart } = useCart();
   const { openCheckout } = useRazorpay();
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
@@ -16,13 +18,19 @@ export default function Checkout() {
 
   const [form, setForm] = useState({
     name: '',
-    email: '',
+    email: user?.email || '',
     phone: '',
     address: '',
     city: '',
     pincode: '',
     state: '',
   });
+
+  useEffect(() => {
+    if (user?.email && !form.email) {
+      setForm((prev) => ({ ...prev, email: user.email }));
+    }
+  }, [user]);
 
   const shipping = subtotal >= FREE_SHIPPING_MIN ? 0 : SHIPPING_FLAT;
   const total = subtotal + shipping;
@@ -36,6 +44,7 @@ export default function Checkout() {
     email: form.email.trim(),
     phone: form.phone.trim(),
     address: `${form.address.trim()}, ${form.city.trim()}, ${form.state.trim()} - ${form.pincode.trim()}`,
+    userId: user?.id || null,
   });
 
   const handleSubmit = async (e) => {

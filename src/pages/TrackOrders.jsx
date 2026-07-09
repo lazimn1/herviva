@@ -1,12 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { trackOrders } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
 
 export default function TrackOrders() {
+  const { user } = useAuth();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [orders, setOrders] = useState(null);
+
+  useEffect(() => {
+    if (user?.email) {
+      setEmail(user.email);
+      
+      const fetchInitialOrders = async () => {
+        setLoading(true);
+        setError('');
+        try {
+          const data = await trackOrders(user.email);
+          setOrders(data.orders);
+        } catch (err) {
+          setError(err.message || 'Failed to find orders for this email.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      fetchInitialOrders();
+    }
+  }, [user?.email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

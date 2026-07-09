@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Logo from './Logo';
 
 const navLinks = [
@@ -14,6 +15,7 @@ const navLinks = [
 export default function Navbar({ cartCount, onCartClick }) {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -70,6 +72,21 @@ export default function Navbar({ cartCount, onCartClick }) {
                 </a>
               )
             ))}
+            {user ? (
+              <button
+                onClick={() => signOut()}
+                className="cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
+              >
+                Log Out
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
+              >
+                Log In
+              </Link>
+            )}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -199,6 +216,25 @@ export default function Navbar({ cartCount, onCartClick }) {
                 </a>
               )
             ))}
+            {user ? (
+              <button
+                onClick={() => {
+                  signOut();
+                  setDrawerOpen(false);
+                }}
+                className="block w-full text-left border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline cursor-pointer"
+              >
+                Log Out
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                onClick={() => setDrawerOpen(false)}
+              >
+                Log In
+              </Link>
+            )}
           </div>
         </nav>
       </div>

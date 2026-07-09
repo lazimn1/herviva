@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider, useCart } from './context/CartContext';
+import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
@@ -11,6 +12,7 @@ import CollectionsPage from './pages/CollectionsPage';
 import ShopPage from './pages/ShopPage';
 import StoryPage from './pages/StoryPage';
 import LookbookPage from './pages/LookbookPage';
+import AuthPage from './pages/AuthPage';
 
 function AppShell() {
   const {
@@ -36,6 +38,7 @@ function AppShell() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/track-orders" element={<TrackOrders />} />
+          <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </main>
       <Footer />
@@ -54,9 +57,11 @@ function AppShell() {
 export default function App() {
   return (
     <BrowserRouter>
-      <CartProvider>
-        <AppShell />
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <AppShell />
+        </CartProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

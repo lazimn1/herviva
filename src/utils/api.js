@@ -28,3 +28,14 @@ export async function getOrder(orderId) {
   if (!res.ok) throw new Error(data.error || 'Order not found');
   return data;
 }
+
+export async function trackOrders(email) {
+  const res = await fetch(`${API_BASE}/api/orders/track`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to fetch orders');
+  return data;
+}

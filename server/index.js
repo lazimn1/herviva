@@ -1,3 +1,4 @@
+/* eslint-env node */
 import express from "express";
 import cors from "cors";
 import crypto from "crypto";
@@ -11,7 +12,7 @@ import { createClient } from "@supabase/supabase-js";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Remove unused __dirname
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -257,6 +258,33 @@ app.get("/api/orders/:id", async (req, res) => {
   } catch (err) {
     console.error("Fetch order error:", err);
     res.status(500).json({ error: "Failed to fetch order" });
+  }
+});
+
+app.post("/api/orders/track", async (req, res) => {
+  try {
+    if (!supabase) return res.status(503).json({ error: "Database not configured" });
+    
+    const { email } = req.body;
+    if (!email || !email.trim()) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('customer->>email', email.trim())
+      .order('createdAt', { ascending: false });
+      
+    if (error) {
+      console.error("Track orders db error:", error);
+      return res.status(500).json({ error: "Failed to track orders" });
+    }
+    
+    res.json({ orders: data || [] });
+  } catch (err) {
+    console.error("Track orders error:", err);
+    res.status(500).json({ error: "Failed to track orders" });
   }
 });
 

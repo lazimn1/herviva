@@ -1,6 +1,4 @@
-import Logo from './Logo';
-
-const footerLinks = {
+import { Link } from 'react-router-dom';const footerLinks = {
   Shop: [
     'New Arrivals',
     'Kurtas & Tunics',
@@ -9,6 +7,7 @@ const footerLinks = {
     'Accessories',
   ],
   Help: [
+    'Track Orders',
     'Size Guide',
     'Shipping & Returns',
     'Care Instructions',
@@ -55,12 +54,21 @@ export default function Footer() {
               <ul className="mt-4 space-y-2.5">
                 {links.map((link) => (
                   <li key={link}>
-                    <a
-                      href="#"
-                      className="text-sm text-cream/70 no-underline transition-colors hover:text-cream"
-                    >
-                      {link}
-                    </a>
+                    {link === 'Track Orders' ? (
+                      <Link
+                        to="/track-orders"
+                        className="text-sm text-cream/70 no-underline transition-colors hover:text-cream"
+                      >
+                        {link}
+                      </Link>
+                    ) : (
+                      <a
+                        href="#"
+                        className="text-sm text-cream/70 no-underline transition-colors hover:text-cream"
+                      >
+                        {link}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

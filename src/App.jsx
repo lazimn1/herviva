@@ -6,6 +6,7 @@ import CartDrawer from './components/CartDrawer';
 import Home from './pages/Home';
 import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
+import TrackOrders from './pages/TrackOrders';
 
 function AppShell() {
   const {
@@ -26,6 +27,7 @@ function AppShell() {
           <Route path="/" element={<Home />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/track-orders" element={<TrackOrders />} />
         </Routes>
       </main>
       <Footer />

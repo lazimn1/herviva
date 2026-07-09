@@ -7,6 +7,10 @@ import Home from './pages/Home';
 import Checkout from './pages/Checkout';
 import OrderSuccess from './pages/OrderSuccess';
 import TrackOrders from './pages/TrackOrders';
+import CollectionsPage from './pages/CollectionsPage';
+import ShopPage from './pages/ShopPage';
+import StoryPage from './pages/StoryPage';
+import LookbookPage from './pages/LookbookPage';
 
 function AppShell() {
   const {
@@ -25,6 +29,10 @@ function AppShell() {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/collections" element={<CollectionsPage />} />
+          <Route path="/shop" element={<ShopPage />} />
+          <Route path="/story" element={<StoryPage />} />
+          <Route path="/lookbook" element={<LookbookPage />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/track-orders" element={<TrackOrders />} />

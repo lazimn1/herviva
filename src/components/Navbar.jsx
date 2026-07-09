@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import Logo from './Logo';
 
 const navLinks = [
-  { label: 'Collections', href: '#collections' },
-  { label: 'Shop', href: '#shop' },
-  { label: 'Our Story', href: '#story' },
-  { label: 'Lookbook', href: '#lookbook' },
+  { label: 'Collections', href: '/collections', isRoute: true },
+  { label: 'Shop', href: '/shop', isRoute: true },
+  { label: 'Our Story', href: '/story', isRoute: true },
+  { label: 'Lookbook', href: '/lookbook', isRoute: true },
   { label: 'Order', href: '/track-orders', isRoute: true },
 ];
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Logo from './Logo';
 
 const navLinks = [
+  { label: 'Home', href: '/', isRoute: true },
   { label: 'Collections', href: '/collections', isRoute: true },
   { label: 'Shop', href: '/shop', isRoute: true },
   { label: 'Our Story', href: '/story', isRoute: true },

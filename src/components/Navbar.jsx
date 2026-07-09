@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Logo from './Logo';
 
 const navLinks = [
@@ -6,6 +7,7 @@ const navLinks = [
   { label: 'Shop', href: '#shop' },
   { label: 'Our Story', href: '#story' },
   { label: 'Lookbook', href: '#lookbook' },
+  { label: 'Order', href: '/track-orders', isRoute: true },
 ];
 
 export default function Navbar({ cartCount, onCartClick }) {
@@ -49,13 +51,23 @@ export default function Navbar({ cartCount, onCartClick }) {
 
           <nav className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
-              >
-                {link.label}
-              </a>
+              link.isRoute ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
+                >
+                  {link.label}
+                </a>
+              )
             ))}
           </nav>
 
@@ -166,14 +178,25 @@ export default function Navbar({ cartCount, onCartClick }) {
         <nav className="p-5">
           <div className="space-y-1">
             {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
-                onClick={() => setDrawerOpen(false)}
-              >
-                {link.label}
-              </a>
+              link.isRoute ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  {link.label}
+                </a>
+              )
             ))}
           </div>
         </nav>

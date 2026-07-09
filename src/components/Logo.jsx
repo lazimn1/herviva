@@ -1,4 +1,4 @@
-export default function Logo({ className = '', light = false }) {
+export default function Logo({ className = '' }) {
   return (
     <div className={`flex items-center ${className}`}>
       <img

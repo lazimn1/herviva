@@ -1,9 +1,8 @@
-/* eslint-env node */
+/* global process */
 import express from "express";
 import cors from "cors";
 import crypto from "crypto";
 import path from "path";
-import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import Razorpay from "razorpay";
 import helmet from "helmet";

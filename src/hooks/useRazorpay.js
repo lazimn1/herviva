@@ -18,7 +18,6 @@ export function useRazorpay() {
   const openCheckout = useCallback(
     async ({
       key,
-      orderId,
       razorpayOrderId,
       amount,
       customer,

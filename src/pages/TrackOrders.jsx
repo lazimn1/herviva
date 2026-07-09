@@ -12,9 +12,11 @@ export default function TrackOrders() {
 
   useEffect(() => {
     if (user?.email) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail(user.email);
       
       const fetchInitialOrders = async () => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
         setError('');
         try {

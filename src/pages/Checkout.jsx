@@ -28,8 +28,10 @@ export default function Checkout() {
 
   useEffect(() => {
     if (user?.email && !form.email) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm((prev) => ({ ...prev, email: user.email }));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const shipping = subtotal >= FREE_SHIPPING_MIN ? 0 : SHIPPING_FLAT;

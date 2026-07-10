@@ -73,6 +73,7 @@ export default function CartDrawer({
               </svg>
               <p className="text-sm text-muted">Your bag is empty</p>
               <button
+                key="/"
                 type="button"
                 onClick={onClose}
                 className="mt-4 cursor-pointer rounded-full bg-burgundy px-6 py-2.5 text-xs font-medium tracking-wide text-cream"

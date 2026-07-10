@@ -4,9 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"node server/index.js\"",
+    "dev": "concurrently \"vite\" \"node --dns-result-order=ipv4first server/index.js\"",
     "dev:client": "vite",
-    "dev:server": "node server/index.js",
+    "dev:server": "node --dns-result-order=ipv4first server/index.js",
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server/index.js",

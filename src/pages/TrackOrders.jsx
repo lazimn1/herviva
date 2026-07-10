@@ -1,29 +1,25 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { trackOrders } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
 
 export default function TrackOrders() {
   const { user } = useAuth();
-  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [orders, setOrders] = useState(null);
 
   useEffect(() => {
     if (user?.email) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setEmail(user.email);
-      
       const fetchInitialOrders = async () => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true);
         setError('');
         try {
           const data = await trackOrders(user.email);
           setOrders(data.orders);
         } catch (err) {
-          setError(err.message || 'Failed to find orders for this email.');
+          setError(err.message || 'Failed to fetch your orders.');
         } finally {
           setLoading(false);
         }
@@ -32,24 +28,6 @@ export default function TrackOrders() {
       fetchInitialOrders();
     }
   }, [user?.email]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    setLoading(true);
-    setError('');
-    setOrders(null);
-
-    try {
-      const data = await trackOrders(email.trim());
-      setOrders(data.orders);
-    } catch (err) {
-      setError(err.message || 'Failed to find orders for this email.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getStatusText = (status) => {
     switch (status) {
@@ -60,40 +38,43 @@ export default function TrackOrders() {
     }
   };
 
+  if (!user) {
+    return (
+      <div className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-20 min-h-[70vh] flex flex-col items-center justify-center">
+        <div className="text-center mb-8">
+          <h1 className="font-serif text-3xl text-ink sm:text-5xl">Track Your Orders</h1>
+          <p className="mt-4 text-sm text-muted max-w-md mx-auto">
+            Please log in to view your order history and tracking status.
+          </p>
+        </div>
+        <Link
+          to="/auth"
+          className="rounded-full bg-burgundy px-8 py-3 text-sm font-medium tracking-wide text-cream transition-colors hover:bg-burgundy/90"
+        >
+          Log In
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-20 min-h-[70vh]">
       <div className="text-center mb-12">
-        <h1 className="font-serif text-3xl text-ink sm:text-5xl">Track Your Orders</h1>
+        <h1 className="font-serif text-3xl text-ink sm:text-5xl">Your Orders</h1>
         <p className="mt-4 text-sm text-muted max-w-md mx-auto">
-          Enter the email address you used during checkout to view your order history and current status.
+          Logged in as {user.email}
         </p>
       </div>
 
-      <div className="max-w-md mx-auto">
-        <form onSubmit={handleSubmit} className="flex gap-3">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email address"
-            className="flex-1 rounded-full border border-cream-dark bg-cream px-5 py-3 text-sm text-ink outline-none transition-colors focus:border-sage"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-full bg-burgundy px-6 py-3 text-sm font-medium tracking-wide text-cream transition-colors hover:bg-burgundy/90 disabled:opacity-70 cursor-pointer"
-          >
-            {loading ? 'Searching...' : 'Track'}
-          </button>
-        </form>
-        {error && <p className="mt-4 text-center text-sm text-burgundy">{error}</p>}
+      <div className="max-w-md mx-auto text-center">
+        {loading && <p className="text-sm text-muted">Loading your orders...</p>}
+        {error && <p className="mt-4 text-sm text-burgundy">{error}</p>}
       </div>
 
-      {orders !== null && (
-        <div className="mt-16 space-y-8">
+      {!loading && !error && orders !== null && (
+        <div className="mt-8 space-y-8">
           <h2 className="font-serif text-2xl text-ink mb-6">
-            {orders.length === 0 ? 'No orders found' : `Your Orders (${orders.length})`}
+            {orders.length === 0 ? 'No orders found' : `Order History (${orders.length})`}
           </h2>
           
           {orders.map((order) => {

@@ -16,10 +16,6 @@ export default function Navbar({ cartCount, onCartClick }) {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user, signOut } = useAuth();
-  
-  const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
-  const isAdmin = user && adminEmails.includes(user.email?.toLowerCase());
-
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -76,14 +72,6 @@ export default function Navbar({ cartCount, onCartClick }) {
                 </a>
               )
             ))}
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
-              >
-                Admin Panel
-              </Link>
-            )}
             {user ? (
               <button
                 onClick={() => signOut()}
@@ -228,15 +216,6 @@ export default function Navbar({ cartCount, onCartClick }) {
                 </a>
               )
             ))}
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
-                onClick={() => setDrawerOpen(false)}
-              >
-                Admin Panel
-              </Link>
-            )}
             {user ? (
               <button
                 onClick={() => {

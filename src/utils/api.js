@@ -39,26 +39,3 @@ export async function trackOrders(email) {
   if (!res.ok) throw new Error(data.error || 'Failed to fetch orders');
   return data;
 }
-
-export async function fetchAdminOrders(token) {
-  const res = await fetch(`${API_BASE}/api/admin/orders`, {
-    headers: { 'Authorization': `Bearer ${token}` },
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to fetch admin orders');
-  return data;
-}
-
-export async function updateOrderStatus(orderId, status, token) {
-  const res = await fetch(`${API_BASE}/api/admin/orders/${orderId}/status`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify({ status }),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to update order status');
-  return data;
-}

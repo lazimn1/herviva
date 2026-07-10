@@ -13,6 +13,7 @@ import ShopPage from './pages/ShopPage';
 import StoryPage from './pages/StoryPage';
 import LookbookPage from './pages/LookbookPage';
 import AuthPage from './pages/AuthPage';
+import AdminPage from './pages/AdminPage';
 
 function AppShell() {
   const {
@@ -39,6 +40,7 @@ function AppShell() {
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/track-orders" element={<TrackOrders />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </main>
       <Footer />

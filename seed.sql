@@ -31,6 +31,11 @@ CREATE TABLE IF NOT EXISTS public.orders (
     status TEXT DEFAULT 'Processing'
 );
 
+-- Safely add columns if the products table already existed
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS sizes JSONB;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS fallback TEXT;
+
 -- Enable RLS (and add permissive policies so Admin works)
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.site_content ENABLE ROW LEVEL SECURITY;

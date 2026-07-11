@@ -1,20 +1,9 @@
+import { supabase } from '../utils/supabase';
+
 /**
- * This service isolates authentication logic for the admin dashboard.
- * It's currently mocked so you can easily wire it up to Supabase, Firebase, or a custom backend later.
+ * This service handles authentication logic for the admin dashboard
+ * using the live Supabase backend.
  */
-
-// Mock delay to simulate network request
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Mock User Data
-const MOCK_ADMIN_USER = {
-  id: 'admin_123',
-  email: 'admin@herviva.com',
-  name: 'Admin User',
-  role: 'admin',
-  isAdmin: true,
-};
-
 export const authService = {
   /**
    * Fetches the currently logged-in user session and checks admin privileges.
@@ -22,36 +11,54 @@ export const authService = {
    */
   checkAdminSession: async () => {
     try {
-      await delay(500); // Simulate API latency
+      // 1. Get the current active session
+      const { data: { session }, error } = await supabase.auth.getSession();
       
-      // TODO: Replace with real Supabase Auth check
-      // const { data: { session }, error } = await supabase.auth.getSession();
-      // if (error) throw error;
-      // const user = session?.user;
-      // const isAdmin = user?.user_metadata?.role === 'admin';
+      if (error) {
+        console.error("Supabase Auth Error:", error.message);
+        return { user: null, isAdmin: false, error: error.message };
+      }
+
+      if (!session) {
+        return { user: null, isAdmin: false, error: 'No active session' };
+      }
+
+      const user = session.user;
       
-      // Returning the mock user for now to allow development
-      return { user: MOCK_ADMIN_USER, isAdmin: MOCK_ADMIN_USER.isAdmin, error: null };
+      // 2. Check if the user has the admin role in their metadata
+      // (This requires you to set user_metadata.role = 'admin' in Supabase for your admin users)
+      const isAdmin = user?.user_metadata?.role === 'admin';
       
-      // To test the 403 screen, change to:
-      // return { user: { ...MOCK_ADMIN_USER, isAdmin: false }, isAdmin: false, error: null };
+      // Fallback/Test check: You could also check if their email matches a hardcoded admin list
+      // const isAdmin = user?.email === 'admin@yourstore.com';
+
+      return { 
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.user_metadata?.name || 'Admin',
+          role: user.user_metadata?.role || 'user'
+        }, 
+        isAdmin, 
+        error: null 
+      };
+      
     } catch (error) {
-      console.error("Auth Service Error:", error);
+      console.error("Auth Service Exception:", error);
       return { user: null, isAdmin: false, error: error.message };
     }
   },
 
   /**
-   * Terminates the current admin session.
+   * Terminates the current admin session via Supabase.
    */
   logoutAdmin: async () => {
     try {
-      await delay(300);
-      // TODO: Replace with real Supabase logout
-      // await supabase.auth.signOut();
-      console.log("Admin logged out successfully.");
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       return { success: true, error: null };
     } catch (error) {
+      console.error("Logout Error:", error.message);
       return { success: false, error: error.message };
     }
   }

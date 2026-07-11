@@ -121,5 +121,27 @@ export const dbService = {
       return [];
     }
     return data;
+  },
+
+  // --- STORAGE ---
+  uploadImage: async (file, fileName) => {
+    const { data, error } = await supabase.storage
+      .from('product-images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: true,
+        contentType: 'image/webp'
+      });
+      
+    if (error) {
+      console.error("Error uploading image:", error);
+      throw error;
+    }
+    
+    const { data: { publicUrl } } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(fileName);
+      
+    return publicUrl;
   }
 };

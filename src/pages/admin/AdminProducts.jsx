@@ -9,6 +9,7 @@ export default function AdminProducts() {
   const [editingId, setEditingId] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     name: '', sku: '', price: '', stock: '', status: 'Active', image: ''
   });
@@ -48,6 +49,40 @@ export default function AdminProducts() {
       image: product.image
     });
     setIsModalOpen(true);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    setSubmitError(null);
+    try {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      const webpBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.8));
+      
+      const fileName = `product-${Date.now()}.webp`;
+      const publicUrl = await dbService.uploadImage(webpBlob, fileName);
+      
+      setFormData(prev => ({ ...prev, image: publicUrl }));
+    } catch (err) {
+      console.error(err);
+      setSubmitError('Failed to process and upload image. Ensure you created the "product-images" storage bucket in Supabase and made it public.');
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -249,11 +284,24 @@ export default function AdminProducts() {
                   </select>
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                  <input 
-                    type="url" name="image" value={formData.image} onChange={handleInputChange} placeholder="https://..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                  <div className="flex items-center gap-4">
+                    {formData.image && (
+                      <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
+                        <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={isUploadingImage}
+                        className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      {isUploadingImage && <p className="text-xs text-indigo-600 mt-2 font-medium animate-pulse">Uploading and optimizing image...</p>}
+                    </div>
+                  </div>
                 </div>
               </div>
               

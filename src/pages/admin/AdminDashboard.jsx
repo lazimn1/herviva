@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { DollarSign, ShoppingBag, CreditCard, AlertCircle } from 'lucide-react';
+import { IndianRupee, ShoppingBag, CreditCard, AlertCircle } from 'lucide-react';
 import { dbService } from '../../services/dbService';
 
 export default function AdminDashboard() {
@@ -33,8 +33,8 @@ export default function AdminDashboard() {
   const statCards = [
     { 
       title: 'Total Revenue', 
-      value: `$${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 
-      icon: DollarSign, 
+      value: `₹${stats.totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 
+      icon: IndianRupee, 
       color: 'bg-green-100 text-green-700' 
     },
     { 
@@ -45,7 +45,7 @@ export default function AdminDashboard() {
     },
     { 
       title: 'Average Order Value', 
-      value: `$${stats.averageOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 
+      value: `₹${stats.averageOrderValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 
       icon: CreditCard, 
       color: 'bg-blue-100 text-blue-700' 
     },
@@ -99,11 +99,11 @@ export default function AdminDashboard() {
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fill: '#6B7280', fontSize: 12 }}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => `₹${value}`}
               />
               <Tooltip 
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-                formatter={(value) => [`$${value}`, 'Sales']}
+                formatter={(value) => [`₹${value}`, 'Sales']}
               />
               <Line 
                 type="monotone" 

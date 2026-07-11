@@ -75,7 +75,7 @@ export default function AdminOrders() {
                     {formatDate(order.date)}
                   </td>
                   <td className="px-6 py-4 font-medium text-gray-900 text-right">
-                    ${order.total.toFixed(2)}
+                    ₹{order.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(order.status)}`}>

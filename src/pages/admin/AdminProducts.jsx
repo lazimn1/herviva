@@ -7,6 +7,8 @@ export default function AdminProducts() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '', sku: '', price: '', stock: '', status: 'Active', image: ''
   });
@@ -29,12 +31,14 @@ export default function AdminProducts() {
 
   const openAddModal = () => {
     setEditingId(null);
+    setSubmitError(null);
     setFormData({ name: '', sku: '', price: '', stock: '', status: 'Active', image: '' });
     setIsModalOpen(true);
   };
 
   const openEditModal = (product) => {
     setEditingId(product.id);
+    setSubmitError(null);
     setFormData({
       name: product.name,
       sku: product.sku,
@@ -48,20 +52,30 @@ export default function AdminProducts() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload = {
-      ...formData,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock, 10)
-    };
-
-    if (editingId) {
-      await dbService.updateProduct(editingId, payload);
-    } else {
-      await dbService.addProduct(payload);
-    }
+    setSubmitError(null);
+    setIsSubmitting(true);
     
-    setIsModalOpen(false);
-    fetchProducts();
+    try {
+      const payload = {
+        ...formData,
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock, 10)
+      };
+
+      if (editingId) {
+        await dbService.updateProduct(editingId, payload);
+      } else {
+        await dbService.addProduct(payload);
+      }
+      
+      setIsModalOpen(false);
+      fetchProducts();
+    } catch (err) {
+      console.error(err);
+      setSubmitError(err.message || 'An error occurred while saving the product. Please check database permissions.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -190,6 +204,11 @@ export default function AdminProducts() {
             </div>
             
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {submitError && (
+                <div className="bg-red-50 text-red-700 p-3 rounded-lg text-sm mb-4 border border-red-200">
+                  {submitError}
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
@@ -247,9 +266,10 @@ export default function AdminProducts() {
                 </button>
                 <button 
                   type="submit"
-                  className="px-4 py-2 text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg font-medium transition-colors"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg font-medium transition-colors disabled:opacity-50"
                 >
-                  {editingId ? 'Save Changes' : 'Create Product'}
+                  {isSubmitting ? 'Saving...' : (editingId ? 'Save Changes' : 'Create Product')}
                 </button>
               </div>
             </form>

@@ -35,6 +35,25 @@ CREATE TABLE IF NOT EXISTS public.orders (
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS category TEXT;
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS sizes JSONB;
 ALTER TABLE public.products ADD COLUMN IF NOT EXISTS fallback TEXT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS sku TEXT;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS price NUMERIC;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS stock INTEGER DEFAULT 0;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Active';
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS image TEXT;
+
+-- Safely add columns if the site_content table already existed
+ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "announcementBar" TEXT;
+ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "heroHeading" TEXT;
+ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "heroSubheading" TEXT;
+ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "aboutUs" TEXT;
+
+-- Safely add columns if the orders table already existed
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS date TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS total NUMERIC;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS customer JSONB;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS items JSONB;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Processing';
 
 -- Enable RLS (and add permissive policies so Admin works)
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;

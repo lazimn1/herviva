@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { dbService } from '../services/dbService';
 import Logo from './Logo';
 
 const navLinks = [
@@ -15,7 +16,18 @@ const navLinks = [
 export default function Navbar({ cartCount, onCartClick }) {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
   const { user, signOut } = useAuth();
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const data = await dbService.getSiteContent();
+      if (data?.announcementBar) {
+        setAnnouncement(data.announcementBar);
+      }
+    };
+    fetchContent();
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -34,13 +46,19 @@ export default function Navbar({ cartCount, onCartClick }) {
     <>
       <header
         className={[
-          'fixed inset-x-0 top-0 z-50 border-b transition-all duration-500',
+          'fixed inset-x-0 top-0 z-50 transition-all duration-500',
           scrolled
-            ? 'border-cream-dark/60 bg-cream/92 shadow-[0_4px_30px_rgba(44,36,25,0.06)] backdrop-blur-xl'
-            : 'border-transparent bg-cream/40 backdrop-blur-md',
+            ? 'bg-cream/92 shadow-[0_4px_30px_rgba(44,36,25,0.06)] backdrop-blur-xl'
+            : 'bg-cream/40 backdrop-blur-md',
         ].join(' ')}
       >
-        <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-5 sm:px-8">
+        {announcement && (
+          <div className="bg-terracotta px-4 py-2 text-center text-sm font-medium tracking-wide text-cream">
+            {announcement}
+          </div>
+        )}
+        <div className="border-b border-cream-dark/60">
+          <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-5 sm:px-8">
           <a
             href="#"
             className="no-underline"
@@ -161,6 +179,7 @@ export default function Navbar({ cartCount, onCartClick }) {
               )}
             </button>
           </div>
+        </div>
         </div>
       </header>
 

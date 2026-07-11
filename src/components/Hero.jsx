@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { dbService } from '../services/dbService';
 
 const slides = [
   {
@@ -30,6 +31,15 @@ const slides = [
 export default function Hero() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [siteContent, setSiteContent] = useState(null);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const data = await dbService.getSiteContent();
+      setSiteContent(data);
+    };
+    fetchContent();
+  }, []);
 
   const next = useCallback(() => {
     setCurrent((c) => (c + 1) % slides.length);
@@ -77,10 +87,10 @@ export default function Hero() {
             {slide.tag}
           </span>
           <h1 className="font-serif text-4xl leading-[1.1] font-medium whitespace-pre-line text-cream sm:text-5xl lg:text-6xl">
-            {slide.title}
+            {siteContent?.heroHeading || slide.title}
           </h1>
           <p className="mt-5 max-w-md text-sm leading-relaxed font-light text-cream/80 sm:text-base">
-            {slide.sub}
+            {siteContent?.heroSubheading || slide.sub}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a

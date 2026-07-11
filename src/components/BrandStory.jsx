@@ -1,4 +1,17 @@
+import { useState, useEffect } from 'react';
+import { dbService } from '../services/dbService';
+
 export default function BrandStory() {
+  const [siteContent, setSiteContent] = useState(null);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const data = await dbService.getSiteContent();
+      setSiteContent(data);
+    };
+    fetchContent();
+  }, []);
+
   return (
     <section id="story" className="overflow-hidden bg-olive py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -39,18 +52,24 @@ export default function BrandStory() {
               <br />
               made for every her
             </h2>
-            <p className="mt-6 text-sm leading-relaxed text-cream/75 sm:text-base">
-              herviva was born from a simple belief: every woman deserves a
-              wardrobe that feels as beautiful as she is. We blend the richness
-              of South Asian craftsmanship with clean, contemporary silhouettes
-              — creating pieces that honour tradition while embracing the rhythm
-              of modern life.
-            </p>
-            <p className="mt-4 text-sm leading-relaxed text-cream/60 sm:text-base">
-              From hand-selected linens to artisanal embroideries, each garment
-              is designed to drape effortlessly, layer beautifully, and become a
-              cherished part of your everyday story.
-            </p>
+            <div className="mt-6 text-sm leading-relaxed text-cream/75 sm:text-base whitespace-pre-line">
+              {siteContent?.aboutUs || (
+                <>
+                  <p>
+                    herviva was born from a simple belief: every woman deserves a
+                    wardrobe that feels as beautiful as she is. We blend the richness
+                    of South Asian craftsmanship with clean, contemporary silhouettes
+                    — creating pieces that honour tradition while embracing the rhythm
+                    of modern life.
+                  </p>
+                  <p className="mt-4">
+                    From hand-selected linens to artisanal embroideries, each garment
+                    is designed to drape effortlessly, layer beautifully, and become a
+                    cherished part of your everyday story.
+                  </p>
+                </>
+              )}
+            </div>
 
             <div className="mt-10 grid grid-cols-3 gap-6 border-t border-cream/15 pt-10">
               {[

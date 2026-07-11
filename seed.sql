@@ -101,11 +101,4 @@ ON CONFLICT (id) DO UPDATE SET
     "heroHeading" = EXCLUDED."heroHeading",
     "heroSubheading" = EXCLUDED."heroSubheading";
 
--- 4. Seed Dummy Orders
-INSERT INTO public.orders (total, customer, items, status, date)
-VALUES 
-(3499.00, '{"name": "Alice Johnson", "email": "alice@example.com", "phone": "555-0123", "address": "123 Lane, Delhi"}'::jsonb, '[{"id": 1, "name": "Sage Linen Kurta", "qty": 1, "price": 3499}]'::jsonb, 'Processing', NOW() - INTERVAL '1 day'),
-(5999.00, '{"name": "Bob Smith", "email": "bob@example.com", "phone": "555-0987", "address": "456 Street, Mumbai"}'::jsonb, '[{"id": 3, "name": "Burgundy Festive Set", "qty": 1, "price": 5999}]'::jsonb, 'Shipped', NOW() - INTERVAL '3 days'),
-(7198.00, '{"name": "Clara Davis", "email": "clara@example.com", "phone": "555-0456", "address": "789 Road, Bangalore"}'::jsonb, '[{"id": 4, "name": "Cream Palazzo Set", "qty": 1, "price": 4299}, {"id": 2, "name": "Terracotta Flow Tunic", "qty": 1, "price": 2899}]'::jsonb, 'Delivered', NOW() - INTERVAL '5 days');
-
--- Removed sequence reset since we don't know if id is serial or uuid
+-- (Dummy orders removed because they are not necessary and conflict with custom table schemas)

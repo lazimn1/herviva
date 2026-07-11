@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { products } from '../data/products';
+import { useState, useEffect } from 'react';
+import { dbService } from '../services/dbService';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/formatPrice';
 
@@ -10,6 +10,27 @@ export default function Products() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [hoveredId, setHoveredId] = useState(null);
   const [sizePicker, setSizePicker] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      const dbProducts = await dbService.getProducts();
+      // Only show active products on storefront
+      const activeProducts = dbProducts.filter(p => p.status !== 'Draft');
+      
+      const formattedProducts = activeProducts.map(p => ({
+        ...p,
+        category: p.category || 'Essentials',
+        sizes: p.sizes || ['S', 'M', 'L', 'XL'],
+        fallback: '/images/fallback.svg'
+      }));
+      setProducts(formattedProducts);
+      setLoading(false);
+    };
+    fetchProducts();
+  }, []);
 
   const filtered =
     activeFilter === 'All'
@@ -62,7 +83,16 @@ export default function Products() {
           ))}
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-burgundy"></div>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 text-muted">
+            No products found in this category.
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {filtered.map((product) => (
             <article
               key={product.id}
@@ -140,6 +170,7 @@ export default function Products() {
             </article>
           ))}
         </div>
+        )}
       </div>
     </section>
   );

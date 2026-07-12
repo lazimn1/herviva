@@ -41,9 +41,11 @@ export default function Hero() {
     fetchContent();
   }, []);
 
+  const displaySlides = siteContent?.heroSlides?.length > 0 ? siteContent.heroSlides : slides;
+
   const next = useCallback(() => {
-    setCurrent((c) => (c + 1) % slides.length);
-  }, []);
+    setCurrent((c) => (c + 1) % displaySlides.length);
+  }, [displaySlides.length]);
 
   useEffect(() => {
     if (paused) return;
@@ -51,7 +53,7 @@ export default function Hero() {
     return () => clearInterval(timer);
   }, [next, paused]);
 
-  const slide = slides[current];
+  const slide = displaySlides[current];
 
   return (
     <section
@@ -60,7 +62,7 @@ export default function Hero() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {slides.map((s, i) => (
+      {displaySlides.map((s, i) => (
         <div
           key={s.tag}
           className="absolute inset-0 transition-opacity duration-1000"
@@ -87,10 +89,10 @@ export default function Hero() {
             {slide.tag}
           </span>
           <h1 className="font-serif text-4xl leading-[1.1] font-medium whitespace-pre-line text-cream sm:text-5xl lg:text-6xl">
-            {siteContent?.heroHeading || slide.title}
+            {slide.title}
           </h1>
           <p className="mt-5 max-w-md text-sm leading-relaxed font-light text-cream/80 sm:text-base">
-            {siteContent?.heroSubheading || slide.sub}
+            {slide.sub}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
@@ -126,10 +128,10 @@ export default function Hero() {
       <div className="absolute right-6 bottom-8 z-20 flex items-center gap-4 sm:right-12">
         <span className="text-xs tabular-nums text-cream/50">
           {String(current + 1).padStart(2, '0')} /{' '}
-          {String(slides.length).padStart(2, '0')}
+          {String(displaySlides.length).padStart(2, '0')}
         </span>
         <div className="flex gap-2">
-          {slides.map((_, i) => (
+          {displaySlides.map((_, i) => (
             <button
               key={i}
               type="button"

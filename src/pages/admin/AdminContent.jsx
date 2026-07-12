@@ -7,7 +7,12 @@ export default function AdminContent() {
     announcementBar: '',
     heroHeading: '',
     heroSubheading: '',
-    aboutUs: ''
+    aboutUs: '',
+    heroSlides: [
+      { tag: 'New Season', title: 'Effortless elegance,\ncrafted for every her', sub: 'Discover flowing silhouettes and timeless pieces that move with you.', image: '/images/hero-1.webp' },
+      { tag: 'Fusion Edit', title: 'Where tradition\nmeets modern grace', sub: 'Contemporary kurtas and tunics reimagined for the woman of today.', image: '/images/hero-2.webp' },
+      { tag: 'The Collection', title: 'Your wardrobe,\nreimagined', sub: 'Premium fabrics, thoughtful details, and silhouettes made to last.', image: '/images/hero-3.webp' }
+    ]
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -17,7 +22,10 @@ export default function AdminContent() {
     const fetchContent = async () => {
       setLoading(true);
       const data = await dbService.getSiteContent();
-      setContent(data);
+      setContent(prev => ({
+        ...data,
+        heroSlides: data?.heroSlides || prev.heroSlides
+      }));
       setLoading(false);
     };
     fetchContent();
@@ -26,6 +34,15 @@ export default function AdminContent() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setContent(prev => ({ ...prev, [name]: value }));
+    setSavedSuccess(false);
+  };
+
+  const handleSlideChange = (index, field, value) => {
+    setContent(prev => {
+      const newSlides = [...prev.heroSlides];
+      newSlides[index] = { ...newSlides[index], [field]: value };
+      return { ...prev, heroSlides: newSlides };
+    });
     setSavedSuccess(false);
   };
 
@@ -77,27 +94,43 @@ export default function AdminContent() {
         {/* Hero Section */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-4">Hero Section (Homepage)</h3>
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Main Heading</label>
-              <input 
-                type="text" 
-                name="heroHeading" 
-                value={content.heroHeading} 
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-lg font-semibold"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Subheading / Description</label>
-              <textarea 
-                name="heroSubheading" 
-                value={content.heroSubheading} 
-                onChange={handleChange}
-                rows={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
-              />
-            </div>
+          
+          <div className="space-y-8">
+            {content.heroSlides.map((slide, index) => (
+              <div key={index} className="p-5 border border-gray-100 rounded-lg bg-gray-50/50 space-y-4">
+                <h4 className="font-medium text-gray-800 border-b border-gray-100 pb-2">Slide {index + 1}</h4>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Eyebrow Tag</label>
+                  <input 
+                    type="text" 
+                    value={slide.tag || ''} 
+                    onChange={(e) => handleSlideChange(index, 'tag', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Main Heading</label>
+                  <textarea 
+                    value={slide.title || ''} 
+                    onChange={(e) => handleSlideChange(index, 'title', e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y text-lg font-semibold"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Subheading / Description</label>
+                  <textarea 
+                    value={slide.sub || ''} 
+                    onChange={(e) => handleSlideChange(index, 'sub', e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

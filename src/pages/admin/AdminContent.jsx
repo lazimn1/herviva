@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Save, CheckCircle2 } from 'lucide-react';
+import { Save, CheckCircle2, Trash2, Plus } from 'lucide-react';
 import { dbService } from '../../services/dbService';
 
 export default function AdminContent() {
@@ -45,6 +45,25 @@ export default function AdminContent() {
       newSlides[index] = { ...newSlides[index], [field]: value };
       return { ...prev, heroSlides: newSlides };
     });
+    setSavedSuccess(false);
+  };
+
+  const handleAddSlide = () => {
+    setContent(prev => ({
+      ...prev,
+      heroSlides: [
+        ...prev.heroSlides,
+        { tag: '', title: '', sub: '', image: '' }
+      ]
+    }));
+    setSavedSuccess(false);
+  };
+
+  const handleRemoveSlide = (indexToRemove) => {
+    setContent(prev => ({
+      ...prev,
+      heroSlides: prev.heroSlides.filter((_, index) => index !== indexToRemove)
+    }));
     setSavedSuccess(false);
   };
 
@@ -133,8 +152,18 @@ export default function AdminContent() {
           
           <div className="space-y-8">
             {content.heroSlides.map((slide, index) => (
-              <div key={index} className="p-5 border border-gray-100 rounded-lg bg-gray-50/50 space-y-4">
-                <h4 className="font-medium text-gray-800 border-b border-gray-100 pb-2">Slide {index + 1}</h4>
+              <div key={index} className="p-5 border border-gray-100 rounded-lg bg-gray-50/50 space-y-4 relative group">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                  <h4 className="font-medium text-gray-800">Slide {index + 1}</h4>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSlide(index)}
+                    className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-md hover:bg-red-50"
+                    title="Remove Slide"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Eyebrow Tag</label>
@@ -188,6 +217,18 @@ export default function AdminContent() {
               </div>
             ))}
           </div>
+          
+          <div className="mt-4 flex justify-end">
+            <button
+              type="button"
+              onClick={handleAddSlide}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Add Slide
+            </button>
+          </div>
+
           {uploadError && (
             <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
               {uploadError}

@@ -32,6 +32,8 @@ export default function Hero() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [siteContent, setSiteContent] = useState(null);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -47,6 +49,29 @@ export default function Hero() {
     setCurrent((c) => (c + 1) % displaySlides.length);
   }, [displaySlides.length]);
 
+  const prev = useCallback(() => {
+    setCurrent((c) => (c - 1 + displaySlides.length) % displaySlides.length);
+  }, [displaySlides.length]);
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    
+    if (isLeftSwipe) next();
+    if (isRightSwipe) prev();
+  };
+
   useEffect(() => {
     if (paused) return;
     const timer = setInterval(next, 6000);
@@ -61,6 +86,9 @@ export default function Hero() {
       style={{ height: '100svh', minHeight: '600px' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {displaySlides.map((s, i) => (
         <div

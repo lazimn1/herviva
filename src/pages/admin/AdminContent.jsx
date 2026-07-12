@@ -17,6 +17,8 @@ export default function AdminContent() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [uploadingSlideIndex, setUploadingSlideIndex] = useState(null);
+  const [uploadError, setUploadError] = useState(null);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -44,6 +46,40 @@ export default function AdminContent() {
       return { ...prev, heroSlides: newSlides };
     });
     setSavedSuccess(false);
+  };
+
+  const handleImageUpload = async (e, index) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingSlideIndex(index);
+    setUploadError(null);
+    try {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      const webpBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.8));
+      
+      const fileName = `hero-${Date.now()}.webp`;
+      const publicUrl = await dbService.uploadImage(webpBlob, fileName);
+      
+      handleSlideChange(index, 'image', publicUrl);
+    } catch (err) {
+      console.error(err);
+      setUploadError('Failed to process and upload image. Please check bucket permissions.');
+    } finally {
+      setUploadingSlideIndex(null);
+    }
   };
 
   const handleSave = async (e) => {
@@ -129,9 +165,34 @@ export default function AdminContent() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Slide Image</label>
+                  <div className="flex items-center gap-4">
+                    {slide.image && (
+                      <div className="w-20 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
+                        <img src={slide.image} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, index)}
+                        disabled={uploadingSlideIndex !== null}
+                        className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      {uploadingSlideIndex === index && <p className="text-xs text-indigo-600 mt-2 font-medium animate-pulse">Uploading and optimizing image...</p>}
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
+          {uploadError && (
+            <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+              {uploadError}
+            </div>
+          )}
         </div>
 
         {/* About Section */}

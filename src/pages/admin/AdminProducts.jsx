@@ -21,7 +21,6 @@ export default function AdminProducts() {
   const [headerSavedSuccess, setHeaderSavedSuccess] = useState(false);
 
   const fetchProducts = async () => {
-  const fetchProducts = async () => {
     setLoading(true);
     const [data, siteData] = await Promise.all([
       dbService.getProducts(),

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Edit2, Trash2, X, Check } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Check, Save, CheckCircle2 } from 'lucide-react';
 import { dbService } from '../../services/dbService';
 
 export default function AdminProducts() {
@@ -13,11 +13,24 @@ export default function AdminProducts() {
   const [formData, setFormData] = useState({
     name: '', sku: '', price: '', stock: '', status: 'Active', image: ''
   });
+  
+  const [shopHeader, setShopHeader] = useState({
+    tag: 'Shop', title: 'New Arrivals', description: 'Pieces designed to drape beautifully, feel luxurious, and become staples in your wardrobe.'
+  });
+  const [savingHeader, setSavingHeader] = useState(false);
+  const [headerSavedSuccess, setHeaderSavedSuccess] = useState(false);
 
   const fetchProducts = async () => {
+  const fetchProducts = async () => {
     setLoading(true);
-    const data = await dbService.getProducts();
+    const [data, siteData] = await Promise.all([
+      dbService.getProducts(),
+      dbService.getSiteContent()
+    ]);
     setProducts(data);
+    if (siteData?.shopHeader) {
+      setShopHeader(siteData.shopHeader);
+    }
     setLoading(false);
   };
 
@@ -28,6 +41,22 @@ export default function AdminProducts() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleHeaderChange = (e) => {
+    const { name, value } = e.target;
+    setShopHeader(prev => ({ ...prev, [name]: value }));
+    setHeaderSavedSuccess(false);
+  };
+
+  const handleSaveHeader = async (e) => {
+    e.preventDefault();
+    setSavingHeader(true);
+    // updateSiteContent does a partial update, so we can just pass shopHeader
+    await dbService.updateSiteContent({ shopHeader });
+    setSavingHeader(false);
+    setHeaderSavedSuccess(true);
+    setTimeout(() => setHeaderSavedSuccess(false), 3000);
   };
 
   const openAddModal = () => {
@@ -143,6 +172,62 @@ export default function AdminProducts() {
           Add Product
         </button>
       </div>
+
+      {/* Shop Page Header Section */}
+      <form onSubmit={handleSaveHeader} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4 mb-8">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Shop Page Header</h3>
+            <p className="text-sm text-gray-500">Edit the texts that appear at the top of the storefront shop page.</p>
+          </div>
+          <div className="flex items-center gap-4">
+            {headerSavedSuccess && (
+              <span className="flex items-center text-sm text-green-600 font-medium animate-in fade-in slide-in-from-bottom-2">
+                <CheckCircle2 className="w-4 h-4 mr-1.5" />
+                Saved
+              </span>
+            )}
+            <button 
+              type="submit"
+              disabled={savingHeader}
+              className={`flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium transition-all shadow-sm ${
+                savingHeader ? 'bg-indigo-400 cursor-not-allowed text-white' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+              }`}
+            >
+              {savingHeader ? (
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              {savingHeader ? 'Saving...' : 'Save Header'}
+            </button>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Eyebrow Tag</label>
+            <input 
+              type="text" name="tag" value={shopHeader.tag} onChange={handleHeaderChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Main Heading</label>
+            <input 
+              type="text" name="title" value={shopHeader.title} onChange={handleHeaderChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all font-semibold"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description Paragraph</label>
+            <textarea 
+              name="description" value={shopHeader.description} onChange={handleHeaderChange} rows={2}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
+            />
+          </div>
+        </div>
+      </form>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">

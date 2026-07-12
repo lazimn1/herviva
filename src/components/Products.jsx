@@ -11,12 +11,18 @@ export default function Products() {
   const [hoveredId, setHoveredId] = useState(null);
   const [sizePicker, setSizePicker] = useState(null);
   const [products, setProducts] = useState([]);
+  const [shopHeader, setShopHeader] = useState({
+    tag: 'Shop', title: 'New Arrivals', description: 'Pieces designed to drape beautifully, feel luxurious, and become staples in your wardrobe.'
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      const dbProducts = await dbService.getProducts();
+      const [dbProducts, siteData] = await Promise.all([
+        dbService.getProducts(),
+        dbService.getSiteContent()
+      ]);
       // Only show active products on storefront
       const activeProducts = dbProducts.filter(p => p.status !== 'Draft');
       
@@ -27,9 +33,14 @@ export default function Products() {
         fallback: '/images/fallback.svg'
       }));
       setProducts(formattedProducts);
+      
+      if (siteData?.shopHeader) {
+        setShopHeader(siteData.shopHeader);
+      }
+      
       setLoading(false);
     };
-    fetchProducts();
+    fetchData();
   }, []);
 
   const filtered =
@@ -54,14 +65,13 @@ export default function Products() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="mb-12 text-center">
           <span className="text-xs tracking-[0.3em] text-sage uppercase">
-            Shop
+            {shopHeader.tag}
           </span>
           <h2 className="mt-3 font-serif text-3xl font-medium text-ink sm:text-4xl lg:text-5xl">
-            New Arrivals
+            {shopHeader.title}
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm text-muted">
-            Pieces designed to drape beautifully, feel luxurious, and become
-            staples in your wardrobe.
+            {shopHeader.description}
           </p>
         </div>
 

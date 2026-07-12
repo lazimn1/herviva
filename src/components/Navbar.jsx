@@ -90,32 +90,35 @@ export default function Navbar({ cartCount, onCartClick }) {
                 </a>
               )
             ))}
-            {user?.user_metadata?.role === 'admin' && (
-              <Link
-                to="/admin"
-                className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
-              >
-                Admin Panel
-              </Link>
-            )}
-            {user ? (
-              <button
-                onClick={() => signOut()}
-                className="cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
-              >
-                Log Out
-              </button>
-            ) : (
-              <Link
-                to="/auth"
-                className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
-              >
-                Log In
-              </Link>
-            )}
           </nav>
 
           <div className="flex items-center gap-2">
+            <div className="hidden lg:flex items-center gap-1 mr-2">
+              {user?.user_metadata?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
+                >
+                  Admin Panel
+                </Link>
+              )}
+              {user ? (
+                <button
+                  onClick={() => signOut()}
+                  className="cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
+                >
+                  Log Out
+                </button>
+              ) : (
+                <Link
+                  to="/auth"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
+                >
+                  Log In
+                </Link>
+              )}
+            </div>
+
             <button
               type="button"
               aria-label="Shopping bag"

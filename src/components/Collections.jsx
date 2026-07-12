@@ -1,4 +1,7 @@
-const collections = [
+import React, { useState, useEffect } from 'react';
+import { dbService } from '../services/dbService';
+
+const defaultCollections = [
   {
     title: 'Kurtas & Tunics',
     desc: 'Flowing fabrics, artisanal prints',
@@ -38,6 +41,18 @@ const collections = [
 ];
 
 export default function Collections() {
+  const [siteContent, setSiteContent] = useState(null);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const data = await dbService.getSiteContent();
+      setSiteContent(data);
+    };
+    fetchContent();
+  }, []);
+
+  const displayCollections = siteContent?.collections?.length > 0 ? siteContent.collections : defaultCollections;
+
   return (
     <section id="collections" className="bg-cream py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -57,7 +72,7 @@ export default function Collections() {
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {collections.map((col, i) => (
+          {displayCollections.map((col, i) => (
             <a
               key={col.title}
               href="#shop"
@@ -69,7 +84,7 @@ export default function Collections() {
                   src={col.image}
                   alt={col.title}
                   onError={(e) => {
-                    e.target.src = col.fallback;
+                    e.target.src = col.fallback || '/images/fallback.svg';
                   }}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />

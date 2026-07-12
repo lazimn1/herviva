@@ -48,6 +48,7 @@ ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "heroHeading" TEXT;
 ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "heroSubheading" TEXT;
 ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "aboutUs" TEXT;
 ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "heroSlides" JSONB;
+ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "collections" JSONB;
 
 -- Safely add columns if the orders table already existed
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS date TIMESTAMP WITH TIME ZONE DEFAULT NOW();
@@ -90,18 +91,20 @@ VALUES
 -- Removed sequence reset since we don't know if id is serial or uuid
 
 -- 3. Seed Site Content
-INSERT INTO public.site_content (id, "announcementBar", "heroHeading", "heroSubheading", "aboutUs", "heroSlides")
+INSERT INTO public.site_content (id, "announcementBar", "heroHeading", "heroSubheading", "aboutUs", "heroSlides", "collections")
 VALUES (
     1, 
     'Free shipping on orders over ₹2999!', 
     'Discover Timeless Elegance', 
     'Elevate your wardrobe with our meticulously crafted pieces designed for the modern woman.',
     'Herviva is born from a desire to blend traditional craftsmanship with contemporary design.',
-    '[{"tag": "New Season", "title": "Effortless elegance,\ncrafted for every her", "sub": "Discover flowing silhouettes and timeless pieces that move with you.", "image": "/images/hero-1.webp"}, {"tag": "Fusion Edit", "title": "Where tradition\nmeets modern grace", "sub": "Contemporary kurtas and tunics reimagined for the woman of today.", "image": "/images/hero-2.webp"}, {"tag": "The Collection", "title": "Your wardrobe,\nreimagined", "sub": "Premium fabrics, thoughtful details, and silhouettes made to last.", "image": "/images/hero-3.webp"}]'::jsonb
+    '[{"tag": "New Season", "title": "Effortless elegance,\ncrafted for every her", "sub": "Discover flowing silhouettes and timeless pieces that move with you.", "image": "/images/hero-1.webp"}, {"tag": "Fusion Edit", "title": "Where tradition\nmeets modern grace", "sub": "Contemporary kurtas and tunics reimagined for the woman of today.", "image": "/images/hero-2.webp"}, {"tag": "The Collection", "title": "Your wardrobe,\nreimagined", "sub": "Premium fabrics, thoughtful details, and silhouettes made to last.", "image": "/images/hero-3.webp"}]'::jsonb,
+    '[{"title": "Kurtas & Tunics", "desc": "Flowing fabrics, artisanal prints", "image": "/images/collection-1.webp", "color": "bg-sage/20", "accent": "text-sage-dark"}, {"title": "Fusion Wear", "desc": "East meets west, effortlessly", "image": "/images/collection-2.webp", "color": "bg-terracotta/15", "accent": "text-terracotta"}, {"title": "Occasion Edit", "desc": "Festive, formal & celebratory", "image": "/images/collection-3.webp", "color": "bg-burgundy/10", "accent": "text-burgundy"}, {"title": "Everyday Essentials", "desc": "Comfort meets quiet luxury", "image": "/images/collection-4.webp", "color": "bg-tan/20", "accent": "text-ink"}]'::jsonb
 )
 ON CONFLICT (id) DO UPDATE SET 
     "heroHeading" = EXCLUDED."heroHeading",
     "heroSubheading" = EXCLUDED."heroSubheading",
-    "heroSlides" = COALESCE(public.site_content."heroSlides", EXCLUDED."heroSlides");
+    "heroSlides" = COALESCE(public.site_content."heroSlides", EXCLUDED."heroSlides"),
+    "collections" = COALESCE(public.site_content."collections", EXCLUDED."collections");
 
 -- (Dummy orders removed because they are not necessary and conflict with custom table schemas)

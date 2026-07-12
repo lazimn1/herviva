@@ -12,12 +12,19 @@ export default function AdminContent() {
       { tag: 'New Season', title: 'Effortless elegance,\ncrafted for every her', sub: 'Discover flowing silhouettes and timeless pieces that move with you.', image: '/images/hero-1.webp' },
       { tag: 'Fusion Edit', title: 'Where tradition\nmeets modern grace', sub: 'Contemporary kurtas and tunics reimagined for the woman of today.', image: '/images/hero-2.webp' },
       { tag: 'The Collection', title: 'Your wardrobe,\nreimagined', sub: 'Premium fabrics, thoughtful details, and silhouettes made to last.', image: '/images/hero-3.webp' }
+    ],
+    collections: [
+      { title: 'Kurtas & Tunics', desc: 'Flowing fabrics, artisanal prints', image: '/images/collection-1.webp', color: 'bg-sage/20', accent: 'text-sage-dark' },
+      { title: 'Fusion Wear', desc: 'East meets west, effortlessly', image: '/images/collection-2.webp', color: 'bg-terracotta/15', accent: 'text-terracotta' },
+      { title: 'Occasion Edit', desc: 'Festive, formal & celebratory', image: '/images/collection-3.webp', color: 'bg-burgundy/10', accent: 'text-burgundy' },
+      { title: 'Everyday Essentials', desc: 'Comfort meets quiet luxury', image: '/images/collection-4.webp', color: 'bg-tan/20', accent: 'text-ink' }
     ]
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [uploadingSlideIndex, setUploadingSlideIndex] = useState(null);
+  const [uploadingCollectionIndex, setUploadingCollectionIndex] = useState(null);
   const [uploadError, setUploadError] = useState(null);
 
   useEffect(() => {
@@ -26,7 +33,8 @@ export default function AdminContent() {
       const data = await dbService.getSiteContent();
       setContent(prev => ({
         ...data,
-        heroSlides: data?.heroSlides || prev.heroSlides
+        heroSlides: data?.heroSlides || prev.heroSlides,
+        collections: data?.collections || prev.collections
       }));
       setLoading(false);
     };
@@ -67,6 +75,34 @@ export default function AdminContent() {
     setSavedSuccess(false);
   };
 
+  const handleCollectionChange = (index, field, value) => {
+    setContent(prev => {
+      const newCols = [...prev.collections];
+      newCols[index] = { ...newCols[index], [field]: value };
+      return { ...prev, collections: newCols };
+    });
+    setSavedSuccess(false);
+  };
+
+  const handleAddCollection = () => {
+    setContent(prev => ({
+      ...prev,
+      collections: [
+        ...prev.collections,
+        { title: '', desc: '', image: '', color: 'bg-sage/20', accent: 'text-sage-dark' }
+      ]
+    }));
+    setSavedSuccess(false);
+  };
+
+  const handleRemoveCollection = (indexToRemove) => {
+    setContent(prev => ({
+      ...prev,
+      collections: prev.collections.filter((_, index) => index !== indexToRemove)
+    }));
+    setSavedSuccess(false);
+  };
+
   const handleImageUpload = async (e, index) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -98,6 +134,40 @@ export default function AdminContent() {
       setUploadError('Failed to process and upload image. Please check bucket permissions.');
     } finally {
       setUploadingSlideIndex(null);
+    }
+  };
+
+  const handleCollectionImageUpload = async (e, index) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingCollectionIndex(index);
+    setUploadError(null);
+    try {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      const webpBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.8));
+      
+      const fileName = `collection-${Date.now()}.webp`;
+      const publicUrl = await dbService.uploadImage(webpBlob, fileName);
+      
+      handleCollectionChange(index, 'image', publicUrl);
+    } catch (err) {
+      console.error(err);
+      setUploadError('Failed to process and upload image. Please check bucket permissions.');
+    } finally {
+      setUploadingCollectionIndex(null);
     }
   };
 
@@ -248,6 +318,80 @@ export default function AdminContent() {
               rows={5}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
             />
+          </div>
+        </div>
+
+        {/* Collections Section */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-4">Collections Section (Homepage)</h3>
+          
+          <div className="space-y-8">
+            {content.collections.map((col, index) => (
+              <div key={index} className="p-5 border border-gray-100 rounded-lg bg-gray-50/50 space-y-4 relative group">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                  <h4 className="font-medium text-gray-800">Collection {index + 1}</h4>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveCollection(index)}
+                    className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-md hover:bg-red-50"
+                    title="Remove Collection"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Collection Title</label>
+                  <input 
+                    type="text" 
+                    value={col.title || ''} 
+                    onChange={(e) => handleCollectionChange(index, 'title', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-lg font-semibold"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea 
+                    value={col.desc || ''} 
+                    onChange={(e) => handleCollectionChange(index, 'desc', e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Collection Image</label>
+                  <div className="flex items-center gap-4">
+                    {col.image && (
+                      <div className="w-16 h-20 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
+                        <img src={col.image} alt="Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => handleCollectionImageUpload(e, index)}
+                        disabled={uploadingCollectionIndex !== null}
+                        className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      {uploadingCollectionIndex === index && <p className="text-xs text-indigo-600 mt-2 font-medium animate-pulse">Uploading and optimizing image...</p>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-4 flex justify-end">
+            <button
+              type="button"
+              onClick={handleAddCollection}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Add Collection
+            </button>
           </div>
         </div>
 

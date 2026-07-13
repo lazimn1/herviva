@@ -19,7 +19,7 @@ export default function BrandStory() {
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
               <img
-                src="/images/brand-story-1.webp"
+                src={siteContent?.aboutUsConfig?.image1 || "/images/brand-story-1.webp"}
                 alt="Fabric detail"
                 onError={(e) => {
                   (e.target.src = '/images/fallback.svg');
@@ -27,7 +27,7 @@ export default function BrandStory() {
                 className="aspect-[3/4] rounded-2xl object-cover"
               />
               <img
-                src="/brand-board.png"
+                src={siteContent?.aboutUsConfig?.image2 || "/brand-board.png"}
                 alt="herviva brand"
                 onError={(e) => {
                   (e.target.src = '/images/fallback.svg');
@@ -36,21 +36,19 @@ export default function BrandStory() {
               />
             </div>
             <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 rounded-2xl bg-terracotta px-8 py-5 text-center shadow-xl sm:left-auto sm:translate-x-0 lg:-right-8">
-              <p className="font-serif text-3xl text-cream">8+</p>
+              <p className="font-serif text-3xl text-cream">{siteContent?.aboutUsConfig?.years || "8+"}</p>
               <p className="text-xs tracking-wide text-cream/80">
-                Years of craft
+                {siteContent?.aboutUsConfig?.yearsText || "Years of craft"}
               </p>
             </div>
           </div>
 
           <div>
             <span className="text-xs tracking-[0.3em] text-sage uppercase">
-              Our Story
+              {siteContent?.aboutUsConfig?.subtitle || "Our Story"}
             </span>
-            <h2 className="mt-3 font-serif text-3xl leading-tight font-medium text-cream sm:text-4xl lg:text-5xl">
-              Woven with intention,
-              <br />
-              made for every her
+            <h2 className="mt-3 font-serif text-3xl leading-tight font-medium text-cream sm:text-4xl lg:text-5xl whitespace-pre-line">
+              {siteContent?.aboutUsConfig?.title || "Woven with intention,\nmade for every her"}
             </h2>
             <div className="mt-6 text-sm leading-relaxed text-cream/75 sm:text-base whitespace-pre-line">
               {siteContent?.aboutUs || (

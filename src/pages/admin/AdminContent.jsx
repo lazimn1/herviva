@@ -8,6 +8,14 @@ export default function AdminContent() {
     heroHeading: '',
     heroSubheading: '',
     aboutUs: '',
+    aboutUsConfig: {
+      image1: '/images/brand-story-1.webp',
+      image2: '/brand-board.png',
+      years: '8+',
+      yearsText: 'Years of craft',
+      subtitle: 'Our Story',
+      title: 'Woven with intention,\nmade for every her'
+    },
     heroSlides: [
       { tag: 'New Season', title: 'Effortless elegance,\ncrafted for every her', sub: 'Discover flowing silhouettes and timeless pieces that move with you.', image: '/images/hero-1.webp' },
       { tag: 'Fusion Edit', title: 'Where tradition\nmeets modern grace', sub: 'Contemporary kurtas and tunics reimagined for the woman of today.', image: '/images/hero-2.webp' },
@@ -25,6 +33,7 @@ export default function AdminContent() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [uploadingSlideIndex, setUploadingSlideIndex] = useState(null);
   const [uploadingCollectionIndex, setUploadingCollectionIndex] = useState(null);
+  const [uploadingAboutImage, setUploadingAboutImage] = useState(null);
   const [uploadError, setUploadError] = useState(null);
 
   useEffect(() => {
@@ -34,7 +43,8 @@ export default function AdminContent() {
       setContent(prev => ({
         ...data,
         heroSlides: data?.heroSlides || prev.heroSlides,
-        collections: data?.collections || prev.collections
+        collections: data?.collections || prev.collections,
+        aboutUsConfig: data?.aboutUsConfig || prev.aboutUsConfig
       }));
       setLoading(false);
     };
@@ -168,6 +178,46 @@ export default function AdminContent() {
       setUploadError('Failed to process and upload image. Please check bucket permissions.');
     } finally {
       setUploadingCollectionIndex(null);
+    }
+  };
+
+  const handleAboutImageUpload = async (e, imageField) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingAboutImage(imageField);
+    setUploadError(null);
+    try {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      const webpBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.8));
+      
+      const fileName = `about-${imageField}-${Date.now()}.webp`;
+      const publicUrl = await dbService.uploadImage(webpBlob, fileName);
+      
+      setContent(prev => ({
+        ...prev,
+        aboutUsConfig: {
+          ...prev.aboutUsConfig,
+          [imageField]: publicUrl
+        }
+      }));
+    } catch (err) {
+      console.error(err);
+      setUploadError('Failed to process and upload image. Please check bucket permissions.');
+    } finally {
+      setUploadingAboutImage(null);
     }
   };
 
@@ -309,15 +359,104 @@ export default function AdminContent() {
         {/* About Section */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-4">About Us Section</h3>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Company Description</label>
-            <textarea 
-              name="aboutUs" 
-              value={content.aboutUs} 
-              onChange={handleChange}
-              rows={5}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
-            />
+          
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Eyebrow Tag / Subtitle</label>
+                <input 
+                  type="text"
+                  value={content.aboutUsConfig?.subtitle || ''}
+                  onChange={(e) => setContent(prev => ({ ...prev, aboutUsConfig: { ...prev.aboutUsConfig, subtitle: e.target.value } }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Main Heading</label>
+                <textarea 
+                  value={content.aboutUsConfig?.title || ''}
+                  onChange={(e) => setContent(prev => ({ ...prev, aboutUsConfig: { ...prev.aboutUsConfig, title: e.target.value } }))}
+                  rows={2}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Highlight Stat (e.g., 8+)</label>
+                <input 
+                  type="text"
+                  value={content.aboutUsConfig?.years || ''}
+                  onChange={(e) => setContent(prev => ({ ...prev, aboutUsConfig: { ...prev.aboutUsConfig, years: e.target.value } }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Highlight Stat Text</label>
+                <input 
+                  type="text"
+                  value={content.aboutUsConfig?.yearsText || ''}
+                  onChange={(e) => setContent(prev => ({ ...prev, aboutUsConfig: { ...prev.aboutUsConfig, yearsText: e.target.value } }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Company Description (Body)</label>
+              <textarea 
+                name="aboutUs" 
+                value={content.aboutUs} 
+                onChange={handleChange}
+                rows={5}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Primary Image</label>
+                <div className="flex items-center gap-4">
+                  {content.aboutUsConfig?.image1 && (
+                    <div className="w-20 h-24 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
+                      <img src={content.aboutUsConfig.image1} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => handleAboutImageUpload(e, 'image1')}
+                      disabled={uploadingAboutImage !== null}
+                      className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {uploadingAboutImage === 'image1' && <p className="text-xs text-indigo-600 mt-2 font-medium animate-pulse">Uploading...</p>}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Secondary Image</label>
+                <div className="flex items-center gap-4">
+                  {content.aboutUsConfig?.image2 && (
+                    <div className="w-20 h-24 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
+                      <img src={content.aboutUsConfig.image2} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => handleAboutImageUpload(e, 'image2')}
+                      disabled={uploadingAboutImage !== null}
+                      className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {uploadingAboutImage === 'image2' && <p className="text-xs text-indigo-600 mt-2 font-medium animate-pulse">Uploading...</p>}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

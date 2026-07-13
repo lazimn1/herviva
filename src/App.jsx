@@ -22,6 +22,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminContent from './pages/admin/AdminContent';
 import AdminOrders from './pages/admin/AdminOrders';
+import AdminReviews from './pages/admin/AdminReviews';
 
 function StorefrontLayout() {
   const {
@@ -66,6 +67,7 @@ export default function App() {
               <Route path="products" element={<AdminProducts />} />
               <Route path="content" element={<AdminContent />} />
               <Route path="orders" element={<AdminOrders />} />
+              <Route path="reviews" element={<AdminReviews />} />
             </Route>
 
             {/* Storefront Routes */}

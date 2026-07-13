@@ -1,3 +1,6 @@
+import { useState, useEffect } from 'react';
+import { dbService } from '../services/dbService';
+
 const reviews = [
   {
     name: 'Priya M.',
@@ -40,22 +43,37 @@ function Stars({ count }) {
 }
 
 export default function Testimonials() {
+  const [siteContent, setSiteContent] = useState(null);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const data = await dbService.getSiteContent();
+      setSiteContent(data);
+    };
+    fetchContent();
+  }, []);
+
+  const config = siteContent?.reviewsConfig;
+  const eyebrow = config?.eyebrow || 'Love Letters';
+  const title = config?.title || 'What Our Hervivas Say';
+  const displayReviews = config?.reviewsList?.length > 0 ? config.reviewsList : reviews;
+
   return (
     <section id="reviews" className="bg-burgundy/5 py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="mb-14 text-center">
           <span className="text-xs tracking-[0.3em] text-sage uppercase">
-            Love Letters
+            {eyebrow}
           </span>
           <h2 className="mt-3 font-serif text-3xl font-medium text-ink sm:text-4xl">
-            What Our Hervivas Say
+            {title}
           </h2>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {reviews.map((review) => (
+          {displayReviews.map((review, index) => (
             <blockquote
-              key={review.name}
+              key={index}
               className="flex flex-col rounded-2xl border border-cream-dark bg-cream p-7"
             >
               <Stars count={review.rating} />

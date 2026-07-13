@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, FileText, ShoppingCart, LogOut, Search, User } from 'lucide-react';
+import { LayoutDashboard, Package, FileText, ShoppingCart, LogOut, Search, User, MessageSquare } from 'lucide-react';
 import { authService } from '../../services/authService';
 
 const NAV_ITEMS = [
   { name: 'Overview', path: '/admin/dashboard', icon: LayoutDashboard },
   { name: 'Products', path: '/admin/products', icon: Package },
   { name: 'Site Content', path: '/admin/content', icon: FileText },
+  { name: 'Reviews', path: '/admin/reviews', icon: MessageSquare },
   { name: 'Orders', path: '/admin/orders', icon: ShoppingCart },
 ];
 

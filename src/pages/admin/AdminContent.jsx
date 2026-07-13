@@ -16,6 +16,17 @@ export default function AdminContent() {
       subtitle: 'Our Story',
       title: 'Woven with intention,\nmade for every her'
     },
+    lookbookConfig: {
+      eyebrow: 'Editorial',
+      title: 'The Lookbook',
+      images: [
+        { src: '/images/lookbook-1.webp', caption: 'The Fusion Edit' },
+        { src: '/images/lookbook-2.webp', caption: 'Soft Drapes' },
+        { src: '/images/lookbook-3.webp', caption: 'Natural Light' },
+        { src: '/images/lookbook-4.webp', caption: 'Festive Mood' },
+        { src: '/images/lookbook-5.webp', caption: 'Everyday Grace' },
+      ]
+    },
     heroSlides: [
       { tag: 'New Season', title: 'Effortless elegance,\ncrafted for every her', sub: 'Discover flowing silhouettes and timeless pieces that move with you.', image: '/images/hero-1.webp' },
       { tag: 'Fusion Edit', title: 'Where tradition\nmeets modern grace', sub: 'Contemporary kurtas and tunics reimagined for the woman of today.', image: '/images/hero-2.webp' },
@@ -34,6 +45,7 @@ export default function AdminContent() {
   const [uploadingSlideIndex, setUploadingSlideIndex] = useState(null);
   const [uploadingCollectionIndex, setUploadingCollectionIndex] = useState(null);
   const [uploadingAboutImage, setUploadingAboutImage] = useState(null);
+  const [uploadingLookbookImageIndex, setUploadingLookbookImageIndex] = useState(null);
   const [uploadError, setUploadError] = useState(null);
 
   useEffect(() => {
@@ -44,7 +56,8 @@ export default function AdminContent() {
         ...data,
         heroSlides: data?.heroSlides || prev.heroSlides,
         collections: data?.collections || prev.collections,
-        aboutUsConfig: data?.aboutUsConfig || prev.aboutUsConfig
+        aboutUsConfig: data?.aboutUsConfig || prev.aboutUsConfig,
+        lookbookConfig: data?.lookbookConfig || prev.lookbookConfig
       }));
       setLoading(false);
     };
@@ -219,6 +232,68 @@ export default function AdminContent() {
     } finally {
       setUploadingAboutImage(null);
     }
+  };
+
+  const handleLookbookImageUpload = async (e, index) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingLookbookImageIndex(index);
+    setUploadError(null);
+    try {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      const webpBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.8));
+      
+      const fileName = `lookbook-${index}-${Date.now()}.webp`;
+      const publicUrl = await dbService.uploadImage(webpBlob, fileName);
+      
+      setContent(prev => {
+        const newLookbookImages = [...(prev.lookbookConfig?.images || [])];
+        if (newLookbookImages[index]) {
+          newLookbookImages[index] = { ...newLookbookImages[index], src: publicUrl };
+        }
+        return {
+          ...prev,
+          lookbookConfig: {
+            ...prev.lookbookConfig,
+            images: newLookbookImages
+          }
+        };
+      });
+    } catch (err) {
+      console.error(err);
+      setUploadError('Failed to process and upload image. Please check bucket permissions.');
+    } finally {
+      setUploadingLookbookImageIndex(null);
+    }
+  };
+
+  const handleLookbookCaptionChange = (index, value) => {
+    setContent(prev => {
+      const newLookbookImages = [...(prev.lookbookConfig?.images || [])];
+      if (newLookbookImages[index]) {
+        newLookbookImages[index] = { ...newLookbookImages[index], caption: value };
+      }
+      return {
+        ...prev,
+        lookbookConfig: {
+          ...prev.lookbookConfig,
+          images: newLookbookImages
+        }
+      };
+    });
   };
 
   const handleSave = async (e) => {
@@ -531,6 +606,69 @@ export default function AdminContent() {
               <Plus className="w-4 h-4" />
               Add Collection
             </button>
+          </div>
+        </div>
+
+        {/* Lookbook Section */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2 mb-4">Lookbook Section</h3>
+          
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Eyebrow Tag</label>
+                <input 
+                  type="text"
+                  value={content.lookbookConfig?.eyebrow || ''}
+                  onChange={(e) => setContent(prev => ({ ...prev, lookbookConfig: { ...prev.lookbookConfig, eyebrow: e.target.value } }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Main Heading</label>
+                <input 
+                  type="text"
+                  value={content.lookbookConfig?.title || ''}
+                  onChange={(e) => setContent(prev => ({ ...prev, lookbookConfig: { ...prev.lookbookConfig, title: e.target.value } }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">Lookbook Images (Fixed 5 Slots for Layout)</label>
+              {content.lookbookConfig?.images?.map((img, index) => (
+                <div key={index} className="p-4 border border-gray-100 rounded-lg bg-gray-50/50 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                  <div className="w-16 h-20 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
+                    <img src={img.src} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                  
+                  <div className="flex-1 space-y-3 w-full">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Image {index + 1}</label>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => handleLookbookImageUpload(e, index)}
+                        disabled={uploadingLookbookImageIndex !== null}
+                        className="w-full text-sm text-gray-500 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      {uploadingLookbookImageIndex === index && <p className="text-xs text-indigo-600 mt-1 font-medium animate-pulse">Uploading...</p>}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Caption</label>
+                      <input 
+                        type="text"
+                        value={img.caption || ''}
+                        onChange={(e) => handleLookbookCaptionChange(index, e.target.value)}
+                        placeholder="e.g. The Fusion Edit"
+                        className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

@@ -51,6 +51,7 @@ ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "heroSlides" JSONB;
 ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "collections" JSONB;
 ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "shopHeader" JSONB;
 ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "aboutUsConfig" JSONB;
+ALTER TABLE public.site_content ADD COLUMN IF NOT EXISTS "lookbookConfig" JSONB;
 
 -- Safely add columns if the orders table already existed
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS date TIMESTAMP WITH TIME ZONE DEFAULT NOW();

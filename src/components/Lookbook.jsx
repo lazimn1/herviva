@@ -1,4 +1,7 @@
-const images = [
+import { useState, useEffect } from 'react';
+import { dbService } from '../services/dbService';
+
+const defaultImages = [
   {
     src: '/images/lookbook-1.webp',
     fallback: '/images/fallback.svg',
@@ -32,16 +35,37 @@ const images = [
 ];
 
 export default function Lookbook() {
+  const [siteContent, setSiteContent] = useState(null);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const data = await dbService.getSiteContent();
+      setSiteContent(data);
+    };
+    fetchContent();
+  }, []);
+
+  const config = siteContent?.lookbookConfig;
+
+  const images = defaultImages.map((def, idx) => {
+    const dynamicImg = config?.images?.[idx];
+    return {
+      ...def,
+      src: dynamicImg?.src || def.src,
+      caption: dynamicImg?.caption || def.caption
+    };
+  });
+
   return (
     <section id="lookbook" className="bg-cream py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="mb-14 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <span className="text-xs tracking-[0.3em] text-sage uppercase">
-              Editorial
+              {config?.eyebrow || 'Editorial'}
             </span>
             <h2 className="mt-3 font-serif text-3xl font-medium text-ink sm:text-4xl lg:text-5xl">
-              The Lookbook
+              {config?.title || 'The Lookbook'}
             </h2>
           </div>
           <a

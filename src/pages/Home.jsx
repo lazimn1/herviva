@@ -1,9 +1,9 @@
 import Hero from '../components/Hero';
 import Collections from '../components/Collections';
-import Products from '../components/Products';
 import BrandStory from '../components/BrandStory';
 import Lookbook from '../components/Lookbook';
 import Testimonials from '../components/Testimonials';
+import Footer from '../components/Footer';
 
 
 export default function Home() {
@@ -11,10 +11,10 @@ export default function Home() {
     <>
       <Hero />
       <Collections />
-      <Products />
       <BrandStory />
       <Lookbook />
       <Testimonials />
+      <Footer />
     </>
   );
 }

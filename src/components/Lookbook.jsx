@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
+import { Link } from 'react-router-dom';
 
 const defaultImages = [
   {
@@ -68,8 +69,8 @@ export default function Lookbook() {
               {config?.title || 'The Lookbook'}
             </h2>
           </div>
-          <a
-            href="#shop"
+          <Link
+            to="/shop"
             className="inline-flex items-center gap-2 text-sm tracking-wide text-burgundy no-underline transition-colors hover:text-terracotta"
           >
             Shop the looks
@@ -86,7 +87,7 @@ export default function Lookbook() {
                 d="M17 8l4 4m0 0l-4 4m4-4H3"
               />
             </svg>
-          </a>
+          </Link>
         </div>
 
         <div className="grid auto-rows-[200px] grid-cols-2 gap-3 sm:auto-rows-[240px] sm:gap-4 lg:grid-cols-4">

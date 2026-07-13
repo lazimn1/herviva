@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { dbService } from '../services/dbService';
+import { Link } from 'react-router-dom';
 
 const slides = [
   {
@@ -123,8 +124,8 @@ export default function Hero() {
             {slide.sub}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href="#shop"
+            <Link
+              to="/shop"
               className="inline-flex items-center gap-2 rounded-full bg-terracotta px-7 py-3 text-sm font-medium tracking-wide text-cream no-underline transition-all hover:bg-terracotta/90 hover:shadow-lg"
             >
               Shop Now
@@ -141,7 +142,7 @@ export default function Hero() {
                   d="M17 8l4 4m0 0l-4 4m4-4H3"
                 />
               </svg>
-            </a>
+            </Link>
             <a
               href="#collections"
               className="inline-flex items-center gap-2 rounded-full border border-cream/40 bg-cream/10 px-7 py-3 text-sm font-medium tracking-wide text-cream no-underline backdrop-blur-sm transition-all hover:bg-cream/20"

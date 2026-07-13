@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext';
 
 // Storefront Components
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import Home from './pages/Home';
 import Checkout from './pages/Checkout';
@@ -41,7 +40,6 @@ function StorefrontLayout() {
       <main>
         <Outlet />
       </main>
-      <Footer />
       <CartDrawer
         open={cartOpen}
         items={cart}

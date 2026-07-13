@@ -20,13 +20,13 @@ import { Link } from 'react-router-dom';const footerLinks = {
 export default function Footer() {
   return (
     <footer className="bg-olive text-cream">
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
-        <div className="grid gap-12 lg:grid-cols-5">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-8 sm:py-20">
+        <div className="grid gap-6 sm:gap-12 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <img
               src="/logo.png"
               alt="herviva"
-              className="h-14 sm:h-16 lg:h-20 w-auto object-contain brightness-200 "
+              className="h-10 sm:h-16 lg:h-20 w-auto object-contain brightness-200 "
             />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-cream/60">
               Elegant fusion wear for the modern woman. Crafted with care,
@@ -76,7 +76,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-cream/15 pt-8 sm:flex-row">
+        <div className="mt-8 sm:mt-14 flex flex-col items-center justify-between gap-4 border-t border-cream/15 pt-6 sm:pt-8 sm:flex-row">
           <p className="text-xs text-cream/40">
             &copy; {new Date().getFullYear()} herviva. All rights reserved.
           </p>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
+import { Link } from 'react-router-dom';
 
 const defaultCollections = [
   {
@@ -73,9 +74,9 @@ export default function Collections() {
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {displayCollections.map((col, i) => (
-            <a
+            <Link
               key={col.title}
-              href="#shop"
+              to="/shop"
               className="group relative overflow-hidden rounded-2xl no-underline"
               style={{ animationDelay: `${i * 100}ms` }}
             >
@@ -117,7 +118,7 @@ export default function Collections() {
                   </svg>
                 </span>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

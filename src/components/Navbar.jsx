@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { dbService } from '../services/dbService';
@@ -17,7 +17,19 @@ export default function Navbar({ cartCount, onCartClick }) {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
   const { user, signOut } = useAuth();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -94,21 +106,73 @@ export default function Navbar({ cartCount, onCartClick }) {
 
           <div className="flex items-center gap-2">
             <div className="hidden lg:flex items-center gap-1 mr-2">
-              {user?.user_metadata?.role === 'admin' && (
-                <Link
-                  to="/admin"
-                  className="rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
-                >
-                  Admin Panel
-                </Link>
-              )}
               {user ? (
-                <button
-                  onClick={() => signOut()}
-                  className="cursor-pointer rounded-full px-4 py-2 text-sm font-medium text-ink/80 no-underline transition-colors hover:bg-sage/10 hover:text-burgundy"
-                >
-                  Log Out
-                </button>
+                <div className="relative" ref={profileRef}>
+                  <button
+                    onClick={() => setProfileOpen(!profileOpen)}
+                    className="flex items-center justify-center cursor-pointer rounded-full border-2 border-transparent transition-all hover:border-sage/30 focus:outline-none"
+                  >
+                    {user.user_metadata?.avatar_url ? (
+                      <img 
+                        src={user.user_metadata.avatar_url} 
+                        alt="Profile" 
+                        className="h-9 w-9 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sage text-cream font-medium">
+                        {user.user_metadata?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+                      </div>
+                    )}
+                  </button>
+
+                  {profileOpen && (
+                    <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl border border-cream-dark bg-white shadow-xl py-2 overflow-hidden z-50">
+                      <div className="px-5 py-3 border-b border-cream-dark/50 bg-cream/30 mb-2">
+                        <p className="text-xs text-muted font-medium uppercase tracking-wider mb-0.5">Hello,</p>
+                        <p className="text-sm font-semibold text-ink truncate">
+                          {user.user_metadata?.full_name || user.email}
+                        </p>
+                      </div>
+                      
+                      <div className="px-2">
+                        <Link 
+                          to="/track-orders" 
+                          className="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-ink/80 transition-colors hover:bg-sage/10 hover:text-burgundy no-underline"
+                          onClick={() => setProfileOpen(false)}
+                        >
+                          Your Orders
+                        </Link>
+                        
+                        <a 
+                          href="#" 
+                          className="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-ink/80 transition-colors hover:bg-sage/10 hover:text-burgundy no-underline opacity-60 cursor-not-allowed"
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          Account Settings
+                        </a>
+                        
+                        {user?.user_metadata?.role === 'admin' && (
+                          <Link 
+                            to="/admin" 
+                            className="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-ink/80 transition-colors hover:bg-sage/10 hover:text-burgundy no-underline"
+                            onClick={() => setProfileOpen(false)}
+                          >
+                            Admin Panel
+                          </Link>
+                        )}
+                        
+                        <div className="my-2 border-t border-cream-dark/50" />
+                        
+                        <button 
+                          onClick={() => { signOut(); setProfileOpen(false); }} 
+                          className="w-full text-left flex items-center rounded-xl px-3 py-2 text-sm font-medium text-burgundy transition-colors hover:bg-burgundy/10 cursor-pointer"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <Link
                   to="/auth"
@@ -223,6 +287,28 @@ export default function Navbar({ cartCount, onCartClick }) {
             </svg>
           </button>
         </div>
+
+        {user && (
+          <div className="flex items-center gap-3 border-b border-cream-dark px-5 py-4 bg-cream/40">
+            {user.user_metadata?.avatar_url ? (
+              <img 
+                src={user.user_metadata.avatar_url} 
+                alt="Profile" 
+                className="h-12 w-12 rounded-full object-cover border border-cream-dark"
+              />
+            ) : (
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sage text-lg font-medium text-cream">
+                {user.user_metadata?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+              </div>
+            )}
+            <div>
+              <p className="text-xs text-muted font-medium uppercase tracking-wider mb-0.5">Welcome back</p>
+              <p className="text-sm font-semibold text-ink truncate w-48">
+                {user.user_metadata?.full_name || user.email}
+              </p>
+            </div>
+          </div>
+        )}
         <nav className="p-5">
           <div className="space-y-1">
             {navLinks.map((link) => (

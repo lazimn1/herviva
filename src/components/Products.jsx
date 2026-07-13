@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { dbService } from '../services/dbService';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { formatPrice } from '../utils/formatPrice';
 
 const filters = ['All', 'Kurtas', 'Tunics', 'Fusion', 'Occasion', 'Essentials'];
 
 export default function Products() {
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [activeFilter, setActiveFilter] = useState('All');
   const [hoveredId, setHoveredId] = useState(null);
   const [sizePicker, setSizePicker] = useState(null);
@@ -123,10 +125,33 @@ export default function Products() {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 {product.badge && (
-                  <span className="absolute top-3 left-3 rounded-full bg-cream/90 px-2.5 py-1 text-[10px] font-medium tracking-wide text-burgundy backdrop-blur-sm">
+                  <span className="absolute top-3 left-3 rounded-full bg-cream/90 px-2.5 py-1 text-[10px] font-medium tracking-wide text-burgundy backdrop-blur-sm z-10">
                     {product.badge}
                   </span>
                 )}
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleWishlist(product.id);
+                  }}
+                  className="absolute top-3 right-3 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-cream/90 backdrop-blur-sm transition-transform hover:scale-110"
+                  aria-label={isInWishlist(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                  <svg
+                    className={`h-4 w-4 transition-colors ${isInWishlist(product.id) ? 'fill-burgundy text-burgundy' : 'fill-transparent text-ink/70'}`}
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                    />
+                  </svg>
+                </button>
 
                 {sizePicker === product.id ? (
                   <div className="absolute right-3 bottom-3 left-3 rounded-2xl bg-cream/95 p-3 backdrop-blur-sm">

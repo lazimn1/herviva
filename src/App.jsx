@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { CartProvider, useCart } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { WishlistProvider } from './context/WishlistContext';
 
 // Storefront Components
 import Navbar from './components/Navbar';
@@ -14,6 +15,7 @@ import ShopPage from './pages/ShopPage';
 import StoryPage from './pages/StoryPage';
 import LookbookPage from './pages/LookbookPage';
 import AuthPage from './pages/AuthPage';
+import WishlistPage from './pages/WishlistPage';
 
 // Admin Components
 import AdminLayout from './pages/admin/AdminLayout';
@@ -56,32 +58,35 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <CartProvider>
-          <Routes>
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="dashboard" replace />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="content" element={<AdminContent />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="reviews" element={<AdminReviews />} />
-            </Route>
+        <WishlistProvider>
+          <CartProvider>
+            <Routes>
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="content" element={<AdminContent />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="reviews" element={<AdminReviews />} />
+              </Route>
 
-            {/* Storefront Routes */}
-            <Route element={<StorefrontLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/collections" element={<CollectionsPage />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/story" element={<StoryPage />} />
-              <Route path="/lookbook" element={<LookbookPage />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/order-success" element={<OrderSuccess />} />
-              <Route path="/track-orders" element={<TrackOrders />} />
-              <Route path="/auth" element={<AuthPage />} />
-            </Route>
-          </Routes>
-        </CartProvider>
+              {/* Storefront Routes */}
+              <Route element={<StorefrontLayout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/collections" element={<CollectionsPage />} />
+                <Route path="/shop" element={<ShopPage />} />
+                <Route path="/story" element={<StoryPage />} />
+                <Route path="/lookbook" element={<LookbookPage />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/order-success" element={<OrderSuccess />} />
+                <Route path="/track-orders" element={<TrackOrders />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
+              </Route>
+            </Routes>
+          </CartProvider>
+        </WishlistProvider>
       </AuthProvider>
     </BrowserRouter>
   );

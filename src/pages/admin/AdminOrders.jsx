@@ -1,6 +1,124 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { dbService } from '../../services/dbService';
-import { Search, Eye, X, Package, MapPin, Phone, Mail, ChevronDown } from 'lucide-react';
+import { Search, Eye, X, Package, MapPin, Phone, Mail, ChevronDown, Check } from 'lucide-react';
+
+const STATUS_OPTIONS = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
+
+const getStatusColor = (status) => {
+  switch(status?.toLowerCase()) {
+    case 'delivered':
+      return 'bg-green-100 text-green-800 border-green-200';
+    case 'processing':
+      return 'bg-blue-100 text-blue-800 border-blue-200';
+    case 'shipped':
+      return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+    case 'paid':
+    case 'confirmed':
+      return 'bg-teal-100 text-teal-800 border-teal-200';
+    case 'pending':
+    case 'pending_payment':
+      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    case 'cancelled':
+      return 'bg-red-100 text-red-800 border-red-200';
+    default:
+      return 'bg-gray-100 text-gray-800 border-gray-200';
+  }
+};
+
+const getStatusLabel = (status) => {
+  switch (status?.toLowerCase()) {
+    case 'paid': return 'Paid (Online)';
+    case 'confirmed': return 'Confirmed (COD)';
+    case 'pending_payment': return 'Pending Payment';
+    case 'processing': return 'Processing';
+    case 'shipped': return 'Shipped';
+    case 'delivered': return 'Delivered';
+    case 'cancelled': return 'Cancelled';
+    default: return status || 'Unknown';
+  }
+};
+
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+const getPlace = (customer) => {
+  if (!customer?.address) return 'N/A';
+  const parts = customer.address.split(',');
+  if (parts.length >= 3) {
+    const city = parts[parts.length - 2].trim();
+    const statePin = parts[parts.length - 1].trim();
+    return `${city}, ${statePin.split('-')[0].trim()}`;
+  }
+  return customer.address;
+};
+
+// Custom Interactive Dropdown Component
+const StatusDropdown = ({ order, onUpdate, isUpdating, fullWidth = false }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelect = (status) => {
+    if (status !== order.status) {
+      onUpdate(order.id, status);
+    }
+    setIsOpen(false);
+  };
+
+  return (
+    <div className={`relative inline-block text-left ${fullWidth ? 'w-full' : ''}`} ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        disabled={isUpdating}
+        className={`inline-flex items-center justify-between px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusColor(order.status)} hover:opacity-80 transition-all outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 disabled:opacity-50 min-w-[125px] ${fullWidth ? 'w-full py-2.5 px-4 text-sm rounded-lg' : ''}`}
+      >
+        <span>{getStatusLabel(order.status)}</span>
+        {isUpdating ? (
+          <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin ml-2"></div>
+        ) : (
+          <ChevronDown className={`w-3 h-3 ml-2 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        )}
+      </button>
+
+      {isOpen && (
+        <div className={`absolute ${fullWidth ? 'left-0 right-0' : 'right-0 sm:left-auto'} mt-2 w-48 rounded-xl bg-white shadow-xl border border-gray-100 ring-1 ring-black ring-opacity-5 focus:outline-none z-50 animate-in fade-in slide-in-from-top-2 duration-150 py-1 overflow-hidden`}>
+          <div className="px-4 py-2.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider bg-gray-50/50 border-b border-gray-50 mb-1">
+            Update Status
+          </div>
+          {STATUS_OPTIONS.map((opt) => {
+            const isSelected = order.status === opt;
+            return (
+              <button
+                key={opt}
+                onClick={() => handleSelect(opt)}
+                className={`w-full text-left flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
+                  isSelected 
+                    ? 'bg-indigo-50/50 text-indigo-700 font-medium' 
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {opt}
+                {isSelected && <Check className="w-4 h-4 text-indigo-600" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -36,58 +154,6 @@ export default function AdminOrders() {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch(status?.toLowerCase()) {
-      case 'delivered':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'processing':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'shipped':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'paid':
-      case 'confirmed':
-        return 'bg-teal-100 text-teal-800 border-teal-200';
-      case 'pending':
-      case 'pending_payment':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getStatusLabel = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'paid': return 'Paid (Online)';
-      case 'confirmed': return 'Confirmed (COD)';
-      case 'pending_payment': return 'Pending Payment';
-      case 'processing': return 'Processing';
-      case 'shipped': return 'Shipped';
-      case 'delivered': return 'Delivered';
-      case 'cancelled': return 'Cancelled';
-      default: return status || 'Unknown';
-    }
-  };
-
-  const STATUS_OPTIONS = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
-
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  const getPlace = (customer) => {
-    if (!customer?.address) return 'N/A';
-    const parts = customer.address.split(',');
-    if (parts.length >= 3) {
-      const city = parts[parts.length - 2].trim();
-      const statePin = parts[parts.length - 1].trim();
-      return `${city}, ${statePin.split('-')[0].trim()}`;
-    }
-    return customer.address;
-  };
-
   const filteredOrders = orders.filter(order => {
     const term = searchTerm.toLowerCase();
     const cust = order.customer || {};
@@ -119,8 +185,9 @@ export default function AdminOrders() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 min-h-[400px]">
+        {/* We use overflow-visible here so the custom dropdown menu doesn't get clipped */}
+        <div className="overflow-visible">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -170,21 +237,11 @@ export default function AdminOrders() {
                       <div className="text-xs text-gray-500 mt-0.5">{itemsCount} item{itemsCount !== 1 && 's'}</div>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="relative inline-block text-left group">
-                        <select 
-                          value={order.status}
-                          onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
-                          disabled={updatingStatus === order.id}
-                          className={`appearance-none cursor-pointer inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border ${getStatusColor(order.status)} hover:opacity-80 transition-opacity pr-8 outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 disabled:opacity-50`}
-                        >
-                          <option value={order.status}>{getStatusLabel(order.status)}</option>
-                          <option disabled>──────────</option>
-                          {STATUS_OPTIONS.map(opt => (
-                            <option key={opt} value={opt}>{opt}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="w-3 h-3 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none opacity-60" />
-                      </div>
+                      <StatusDropdown 
+                        order={order} 
+                        onUpdate={handleUpdateStatus} 
+                        isUpdating={updatingStatus === order.id} 
+                      />
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button 
@@ -273,7 +330,7 @@ export default function AdminOrders() {
                   </div>
 
                   {/* Status & Payment Card */}
-                  <div className="bg-gray-50 p-5 rounded-xl border border-gray-100">
+                  <div className="bg-gray-50 p-5 rounded-xl border border-gray-100 overflow-visible">
                     <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4 flex items-center gap-2">
                       <Package className="w-4 h-4 text-indigo-500" />
                       Order Status
@@ -282,21 +339,12 @@ export default function AdminOrders() {
                     <div className="space-y-4">
                       <div>
                         <p className="text-xs text-gray-500 font-medium mb-1.5">Current Status</p>
-                        <div className="relative inline-block w-full">
-                          <select 
-                            value={selectedOrder.status}
-                            onChange={(e) => handleUpdateStatus(selectedOrder.id, e.target.value)}
-                            disabled={updatingStatus === selectedOrder.id}
-                            className={`w-full appearance-none cursor-pointer px-4 py-2.5 rounded-lg text-sm font-semibold border ${getStatusColor(selectedOrder.status)} hover:opacity-90 transition-opacity outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 disabled:opacity-50`}
-                          >
-                            <option value={selectedOrder.status}>{getStatusLabel(selectedOrder.status)}</option>
-                            <option disabled>──────────</option>
-                            {STATUS_OPTIONS.map(opt => (
-                              <option key={opt} value={opt}>{opt}</option>
-                            ))}
-                          </select>
-                          <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-60" />
-                        </div>
+                        <StatusDropdown 
+                          order={selectedOrder} 
+                          onUpdate={handleUpdateStatus} 
+                          isUpdating={updatingStatus === selectedOrder.id} 
+                          fullWidth={true}
+                        />
                       </div>
                       
                       <div>

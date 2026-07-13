@@ -123,6 +123,15 @@ export const dbService = {
     return data;
   },
 
+  updateOrderStatus: async (id, status) => {
+    const { data, error } = await supabase.from('orders').update({ status }).eq('id', id).select();
+    if (error) {
+      console.error("Error updating order status:", error);
+      throw error;
+    }
+    return data[0];
+  },
+
   // --- STORAGE ---
   uploadImage: async (file, fileName) => {
     const { data, error } = await supabase.storage

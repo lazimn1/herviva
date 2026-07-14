@@ -34,7 +34,9 @@ export default function Products() {
         sizes: p.sizes || ['S', 'M', 'L', 'XL'],
         fallback: '/images/fallback.svg'
       }));
-      setProducts(formattedProducts);
+      // Remove duplicate products based on id to ensure uniqueness
+      const uniqueProducts = Array.from(new Map(formattedProducts.map(p => [p.id, p])).values());
+      setProducts(uniqueProducts);
       
       if (siteData?.shopHeader) {
         setShopHeader(siteData.shopHeader);

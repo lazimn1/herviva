@@ -6,36 +6,36 @@ const defaultImages = [
   {
     src: '/images/lookbook-1.webp',
     fallback: '/images/fallback.svg',
-    // Desktop: large feature tile (col 2 + row 2)
-    spanDesktop: 'sm:col-span-2 sm:row-span-2',
+    // Large feature tile (col 2 + row 2)
+    span: 'col-span-2 row-span-2',
     caption: 'The Fusion Edit',
   },
   {
     src: '/images/lookbook-2.webp',
     fallback: '/images/fallback.svg',
-    // Desktop: top right small
-    spanDesktop: 'sm:col-span-1',
+    // Top right small
+    span: 'col-span-1',
     caption: 'Soft Drapes',
   },
   {
     src: '/images/lookbook-3.webp',
     fallback: '/images/fallback.svg',
-    // Desktop: top right small
-    spanDesktop: 'sm:col-span-1',
+    // Top right small
+    span: 'col-span-1',
     caption: 'Natural Light',
   },
   {
     src: '/images/lookbook-4.webp',
     fallback: '/images/fallback.svg',
-    // Desktop: bottom right medium (fills the remaining 2 cols of row 2)
-    spanDesktop: 'sm:col-span-2',
+    // Bottom right medium
+    span: 'col-span-2',
     caption: 'Festive Mood',
   },
   {
     src: '/images/lookbook-5.webp',
     fallback: '/images/fallback.svg',
-    // Desktop: full width bottom landscape
-    spanDesktop: 'sm:col-span-4 sm:h-[450px]',
+    // Full width bottom landscape
+    span: 'col-span-4 h-[180px] sm:h-[450px]',
     caption: 'Everyday Grace',
   },
 ];
@@ -65,7 +65,7 @@ export default function Lookbook() {
 
   return (
     <section id="lookbook" className="relative overflow-hidden bg-[#FAF9F6] py-16 sm:py-24 lg:py-32">
-      {/* Decorative Background Text (Modern Luxury Touch) */}
+      {/* Decorative Background Text */}
       <div className="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 select-none opacity-[0.03]">
         <h2 className="font-serif text-[120px] font-bold leading-none tracking-tighter text-ink sm:text-[200px] lg:text-[280px]">
           EDITORIAL
@@ -104,41 +104,14 @@ export default function Lookbook() {
         </div>
 
         {/* 
-          MOBILE VIEW: Horizontal Snap Carousel
-          A highly modern, app-like standard for mobile galleries.
-        */}
-        <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-8 sm:hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {images.map((img) => (
-            <div
-              key={img.caption}
-              className="relative aspect-[3/4] w-[85vw] shrink-0 snap-center overflow-hidden rounded-2xl shadow-sm"
-            >
-              <img
-                src={img.src}
-                alt={img.caption}
-                onError={(e) => {
-                  e.target.src = img.fallback || '/images/fallback.svg';
-                }}
-                className="h-full w-full object-cover object-top"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent" />
-              <div className="absolute bottom-5 left-5">
-                <span className="text-[10px] tracking-[0.2em] text-cream/80 uppercase">Look</span>
-                <p className="mt-1 font-serif text-lg text-cream">{img.caption}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* 
-          DESKTOP VIEW: Perfect Asymmetrical Masonry Grid
+          UNIFIED VIEW: Perfect Asymmetrical Masonry Grid across all screens
           4 Columns. Fits the 5 images perfectly (2x2, 1x1, 1x1, 2x1, 4x1)
         */}
-        <div className="hidden sm:grid sm:auto-rows-[280px] sm:grid-cols-4 sm:gap-4 lg:auto-rows-[340px] lg:gap-6">
+        <div className="grid auto-rows-[120px] grid-cols-4 gap-2 sm:auto-rows-[280px] sm:gap-4 lg:auto-rows-[340px] lg:gap-6">
           {images.map((img) => (
             <div
               key={img.caption}
-              className={`group relative overflow-hidden rounded-2xl bg-gray-100 ${img.spanDesktop}`}
+              className={`group relative overflow-hidden rounded-xl bg-gray-100 sm:rounded-2xl ${img.span}`}
             >
               <img
                 src={img.src}
@@ -148,11 +121,14 @@ export default function Lookbook() {
                 }}
                 className="h-full w-full object-cover object-top transition-transform duration-1000 group-hover:scale-105"
               />
-              {/* Elegant hover overlay */}
-              <div className="absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/30" />
-              <div className="absolute bottom-0 left-0 p-6 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0 translate-y-4">
-                <span className="text-xs tracking-[0.2em] text-cream/90 uppercase">Look</span>
-                <p className="mt-1 font-serif text-xl text-cream">{img.caption}</p>
+              
+              {/* Overlay: Always slightly dark on mobile for readability, pure hover on desktop */}
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent sm:bg-ink/0 sm:bg-none sm:transition-colors sm:duration-500 sm:group-hover:bg-ink/30" />
+              
+              {/* Caption: Always visible on mobile, hover reveal on desktop */}
+              <div className="absolute bottom-0 left-0 p-3 sm:p-6 opacity-100 sm:translate-y-4 sm:opacity-0 sm:transition-all sm:duration-500 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
+                <span className="text-[8px] tracking-[0.2em] text-cream/90 uppercase sm:text-xs">Look</span>
+                <p className="mt-0.5 font-serif text-[11px] leading-tight text-cream sm:mt-1 sm:text-xl">{img.caption}</p>
               </div>
             </div>
           ))}

@@ -132,7 +132,7 @@ export default function Navbar({ cartCount, onCartClick }) {
             </button>
 
             {user ? (
-              <div className="relative" ref={profileRef}>
+              <div className="relative hidden lg:block" ref={profileRef}>
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
                   className="flex items-center justify-center cursor-pointer rounded-full border-2 border-transparent transition-all hover:border-sage/30 focus:outline-none"
@@ -332,6 +332,15 @@ export default function Navbar({ cartCount, onCartClick }) {
                 </a>
               )
             ))}
+            {user && (
+              <Link
+                to="/wishlist"
+                className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                onClick={() => setDrawerOpen(false)}
+              >
+                Wishlist
+              </Link>
+            )}
             {user?.user_metadata?.role === 'admin' && (
               <Link
                 to="/admin"

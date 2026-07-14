@@ -152,11 +152,26 @@ export default function Navbar({ cartCount, onCartClick }) {
 
                 {profileOpen && (
                   <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl border border-cream-dark bg-white shadow-xl py-2 overflow-hidden z-50">
-                    <div className="px-5 py-3 border-b border-cream-dark/50 bg-cream/30 mb-2">
-                      <p className="text-xs text-muted font-medium uppercase tracking-wider mb-0.5">Hello,</p>
-                      <p className="text-sm font-semibold text-ink truncate">
-                        {user.user_metadata?.full_name || user.email}
-                      </p>
+                    <div className="px-5 py-4 border-b border-cream-dark/50 bg-cream/30 mb-2">
+                      <div className="flex items-center gap-3 mb-2">
+                        {user.user_metadata?.avatar_url ? (
+                          <img
+                            src={user.user_metadata.avatar_url}
+                            alt="Profile"
+                            className="h-10 w-10 rounded-full object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-sage text-cream font-medium flex-shrink-0">
+                            {user.user_metadata?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-ink truncate">
+                            {user.user_metadata?.full_name || 'Welcome'}
+                          </p>
+                          <p className="text-xs text-muted truncate">{user.email}</p>
+                        </div>
+                      </div>
                     </div>
                     
                     <div className="px-2">

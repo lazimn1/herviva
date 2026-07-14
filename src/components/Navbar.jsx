@@ -317,10 +317,10 @@ export default function Navbar({ cartCount, onCartClick }) {
               </div>
             )}
             <div>
-              <p className="text-xs text-muted font-medium uppercase tracking-wider mb-0.5">Welcome back</p>
               <p className="text-sm font-semibold text-ink truncate w-48">
-                {user.user_metadata?.full_name || user.email}
+                {user.user_metadata?.full_name || 'Welcome'}
               </p>
+              <p className="text-xs text-muted truncate w-48">{user.email}</p>
             </div>
           </div>
         )}

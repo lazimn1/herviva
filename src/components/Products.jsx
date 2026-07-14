@@ -34,8 +34,14 @@ export default function Products() {
         sizes: p.sizes || ['S', 'M', 'L', 'XL'],
         fallback: '/images/fallback.svg'
       }));
-      // Remove duplicate products based on id to ensure uniqueness
-      const uniqueProducts = Array.from(new Map(formattedProducts.map(p => [p.id, p])).values());
+      // Remove duplicate products based on image and name to ensure uniqueness
+      const seen = new Set();
+      const uniqueProducts = formattedProducts.filter(p => {
+        const key = `${p.image}|${p.name}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
       setProducts(uniqueProducts);
       
       if (siteData?.shopHeader) {

@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+
+const CATEGORIES = ['Kurtas', 'Tunics', 'Fusion', 'Occasion', 'Essentials', 'Dresses', 'Accessories'];
+const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
 import { Plus, Edit2, Trash2, X, Check, Save, CheckCircle2 } from 'lucide-react';
 import { dbService } from '../../services/dbService';
 
@@ -11,7 +14,7 @@ export default function AdminProducts() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', sku: '', price: '', stock: '', status: 'Active', image: ''
+    name: '', sku: '', price: '', stock: '', status: 'Active', image: '', category: 'Kurtas', sizes: ['S', 'M', 'L', 'XL']
   });
   
   const [shopHeader, setShopHeader] = useState({
@@ -42,6 +45,15 @@ export default function AdminProducts() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSizeToggle = (size) => {
+    setFormData(prev => {
+      const sizes = prev.sizes.includes(size)
+        ? prev.sizes.filter(s => s !== size)
+        : [...prev.sizes, size];
+      return { ...prev, sizes };
+    });
+  };
+
   const handleHeaderChange = (e) => {
     const { name, value } = e.target;
     setShopHeader(prev => ({ ...prev, [name]: value }));
@@ -61,7 +73,7 @@ export default function AdminProducts() {
   const openAddModal = () => {
     setEditingId(null);
     setSubmitError(null);
-    setFormData({ name: '', sku: '', price: '', stock: '', status: 'Active', image: '' });
+    setFormData({ name: '', sku: '', price: '', stock: '', status: 'Active', image: '', category: 'Kurtas', sizes: ['S', 'M', 'L', 'XL'] });
     setIsModalOpen(true);
   };
 
@@ -74,7 +86,9 @@ export default function AdminProducts() {
       price: product.price,
       stock: product.stock,
       status: product.status,
-      image: product.image
+      image: product.image,
+      category: product.category || 'Kurtas',
+      sizes: Array.isArray(product.sizes) ? product.sizes : ['S', 'M', 'L', 'XL']
     });
     setIsModalOpen(true);
   };
@@ -235,6 +249,8 @@ export default function AdminProducts() {
               <tr className="bg-gray-50 border-b border-gray-200 text-sm text-gray-500 uppercase tracking-wider">
                 <th className="px-6 py-4 font-semibold">Product</th>
                 <th className="px-6 py-4 font-semibold">SKU</th>
+                <th className="px-6 py-4 font-semibold">Category</th>
+                <th className="px-6 py-4 font-semibold">Sizes</th>
                 <th className="px-6 py-4 font-semibold">Price</th>
                 <th className="px-6 py-4 font-semibold">Stock</th>
                 <th className="px-6 py-4 font-semibold">Status</th>
@@ -257,6 +273,16 @@ export default function AdminProducts() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 font-mono">{product.sku}</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
+                      {product.category || '—'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {Array.isArray(product.sizes) && product.sizes.length > 0
+                      ? product.sizes.join(', ')
+                      : '—'}
+                  </td>
                   <td className="px-6 py-4 font-medium text-gray-900">₹{product.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -296,7 +322,7 @@ export default function AdminProducts() {
               ))}
               {products.length === 0 && (
                 <tr>
-                  <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan="8" className="px-6 py-12 text-center text-gray-500">
                     No products found. Add a new product to get started.
                   </td>
                 </tr>
@@ -358,6 +384,17 @@ export default function AdminProducts() {
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <select
+                    name="category" value={formData.category} onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white"
+                  >
+                    {CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                   <select 
                     name="status" value={formData.status} onChange={handleInputChange}
@@ -366,6 +403,28 @@ export default function AdminProducts() {
                     <option value="Active">Active</option>
                     <option value="Draft">Draft</option>
                   </select>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Available Sizes</label>
+                  <div className="flex flex-wrap gap-2">
+                    {ALL_SIZES.map(size => (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => handleSizeToggle(size)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                          formData.sizes.includes(size)
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'bg-white text-gray-600 border-gray-300 hover:border-indigo-400'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                  {formData.sizes.length === 0 && (
+                    <p className="text-xs text-red-500 mt-1">Please select at least one size.</p>
+                  )}
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>

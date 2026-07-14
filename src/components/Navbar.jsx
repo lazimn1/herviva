@@ -70,7 +70,7 @@ export default function Navbar({ cartCount, onCartClick }) {
           </div>
         )}
         <div className="border-b border-cream-dark/60">
-          <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-5 sm:px-8">
+          <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-8 lg:h-[68px]">
           <a
             href="#"
             className="no-underline"
@@ -104,12 +104,12 @@ export default function Navbar({ cartCount, onCartClick }) {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <button
               type="button"
               aria-label="Shopping bag"
               onClick={onCartClick}
-              className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-cream-dark bg-transparent text-ink transition-colors hover:bg-sage/10"
+              className="relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-transparent text-ink transition-colors hover:bg-sage/10 sm:h-10 sm:w-10 sm:border sm:border-cream-dark"
             >
               <svg
                 className="h-[18px] w-[18px]"
@@ -125,7 +125,7 @@ export default function Navbar({ cartCount, onCartClick }) {
                 />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-burgundy px-1 text-[10px] font-medium text-cream">
+                <span className="absolute -top-0.5 -right-0.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-burgundy px-1 text-[9px] font-medium text-cream">
                   {cartCount}
                 </span>
               )}
@@ -227,7 +227,7 @@ export default function Navbar({ cartCount, onCartClick }) {
             <button
               type="button"
               aria-label="Toggle menu"
-              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-cream-dark bg-transparent text-ink transition-colors hover:bg-sage/10 lg:hidden"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-transparent text-ink transition-colors hover:bg-sage/10 sm:h-10 sm:w-10 sm:border sm:border-cream-dark lg:hidden"
               onClick={() => setDrawerOpen(!drawerOpen)}
             >
               {drawerOpen ? (
@@ -275,16 +275,16 @@ export default function Navbar({ cartCount, onCartClick }) {
       />
       <div
         className={[
-          'fixed top-0 right-0 z-50 h-full w-[min(320px,85vw)] border-l border-cream-dark bg-cream shadow-2xl transition-transform duration-400 lg:hidden',
+          'fixed top-0 right-0 z-50 h-full w-[min(280px,80vw)] border-l border-cream-dark bg-cream shadow-2xl transition-transform duration-300 lg:hidden',
           drawerOpen ? 'translate-x-0' : 'translate-x-full',
         ].join(' ')}
       >
-        <div className="flex h-[68px] items-center justify-between border-b border-cream-dark px-5">
+        <div className="flex h-14 items-center justify-between border-b border-cream-dark px-4">
           <Logo />
           <button
             type="button"
             aria-label="Close menu"
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-cream-dark"
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-ink hover:bg-sage/10"
             onClick={() => setDrawerOpen(false)}
           >
             <svg
@@ -304,34 +304,34 @@ export default function Navbar({ cartCount, onCartClick }) {
         </div>
 
         {user && (
-          <div className="flex items-center gap-3 border-b border-cream-dark px-5 py-4 bg-cream/40">
+          <div className="flex items-center gap-3 border-b border-cream-dark px-4 py-3 bg-cream/40">
             {user.user_metadata?.avatar_url ? (
               <img 
                 src={user.user_metadata.avatar_url} 
                 alt="Profile" 
-                className="h-12 w-12 rounded-full object-cover border border-cream-dark"
+                className="h-9 w-9 rounded-full object-cover border border-cream-dark"
               />
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sage text-lg font-medium text-cream">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sage text-base font-medium text-cream">
                 {user.user_metadata?.full_name?.[0] || user.email?.[0]?.toUpperCase() || 'U'}
               </div>
             )}
-            <div>
-              <p className="text-sm font-semibold text-ink truncate w-48">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-ink truncate">
                 {user.user_metadata?.full_name || 'Welcome'}
               </p>
-              <p className="text-xs text-muted truncate w-48">{user.email}</p>
+              <p className="text-xs text-muted truncate">{user.email}</p>
             </div>
           </div>
         )}
-        <nav className="p-5">
-          <div className="space-y-1">
+        <nav className="px-4 py-2">
+          <div className="space-y-0">
             {navLinks.map((link) => (
               link.isRoute ? (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                  className="flex items-center border-b border-cream-dark/60 py-3 text-sm font-medium text-ink no-underline"
                   onClick={() => setDrawerOpen(false)}
                 >
                   {link.label}
@@ -340,7 +340,7 @@ export default function Navbar({ cartCount, onCartClick }) {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                  className="flex items-center border-b border-cream-dark/60 py-3 text-sm font-medium text-ink no-underline"
                   onClick={() => setDrawerOpen(false)}
                 >
                   {link.label}
@@ -350,7 +350,7 @@ export default function Navbar({ cartCount, onCartClick }) {
             {user && (
               <Link
                 to="/wishlist"
-                className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                className="flex items-center border-b border-cream-dark/60 py-3 text-sm font-medium text-ink no-underline"
                 onClick={() => setDrawerOpen(false)}
               >
                 Wishlist
@@ -359,7 +359,7 @@ export default function Navbar({ cartCount, onCartClick }) {
             {user?.user_metadata?.role === 'admin' && (
               <Link
                 to="/admin"
-                className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                className="flex items-center border-b border-cream-dark/60 py-3 text-sm font-medium text-ink no-underline"
                 onClick={() => setDrawerOpen(false)}
               >
                 Admin Panel
@@ -371,14 +371,14 @@ export default function Navbar({ cartCount, onCartClick }) {
                   signOut();
                   setDrawerOpen(false);
                 }}
-                className="block w-full text-left border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline cursor-pointer"
+                className="flex w-full items-center border-b border-cream-dark/60 py-3 text-sm font-medium text-burgundy no-underline cursor-pointer bg-transparent"
               >
                 Log Out
               </button>
             ) : (
               <Link
                 to="/auth"
-                className="block border-b border-cream-dark py-3.5 text-[15px] font-medium text-ink no-underline"
+                className="flex items-center border-b border-cream-dark/60 py-3 text-sm font-medium text-ink no-underline"
                 onClick={() => setDrawerOpen(false)}
               >
                 Log In
@@ -388,7 +388,7 @@ export default function Navbar({ cartCount, onCartClick }) {
         </nav>
       </div>
 
-      <div className="h-[68px]" />
+      <div className="h-14 lg:h-[68px]" />
     </>
   );
 }

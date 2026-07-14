@@ -84,7 +84,7 @@ export default function Hero() {
   return (
     <section
       className="relative w-full overflow-hidden bg-olive"
-      style={{ height: '100svh', minHeight: '600px' }}
+      style={{ height: '100svh', minHeight: '520px' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={handleTouchStart}
@@ -106,27 +106,28 @@ export default function Hero() {
             onError={(e) => {
               e.target.src = s.fallback;
             }}
-            className={`h-full w-full object-cover ${i === current ? 'animate-slow-zoom' : ''}`}
+            className={`h-full w-full object-cover object-top sm:object-center ${i === current ? 'animate-slow-zoom' : ''}`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/25 to-ink/10" />
+          {/* Stronger gradient on mobile for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/35 to-ink/5 sm:from-ink/75 sm:via-ink/25 sm:to-ink/10" />
         </div>
       ))}
 
-      <div className="absolute inset-0 z-10 flex flex-col justify-end px-6 pb-20 sm:px-12 sm:pb-24 lg:px-16">
+      <div className="absolute inset-0 z-10 flex flex-col justify-end px-5 pb-16 sm:px-12 sm:pb-24 lg:px-16">
         <div className="max-w-2xl animate-fade-up" key={current}>
-          <span className="mb-4 inline-block text-xs tracking-[0.3em] text-cream/70 uppercase">
+          <span className="mb-3 inline-block text-[10px] tracking-[0.25em] text-cream/70 uppercase sm:mb-4 sm:text-xs sm:tracking-[0.3em]">
             {slide.tag}
           </span>
-          <h1 className="font-serif text-4xl leading-[1.1] font-medium whitespace-pre-line text-cream sm:text-5xl lg:text-6xl">
+          <h1 className="font-serif text-[1.85rem] leading-[1.1] font-medium whitespace-pre-line text-cream sm:text-5xl lg:text-6xl">
             {slide.title}
           </h1>
-          <p className="mt-5 max-w-md text-sm leading-relaxed font-light text-cream/80 sm:text-base">
+          <p className="mt-3 max-w-sm text-[13px] leading-relaxed font-light text-cream/80 sm:mt-5 sm:max-w-md sm:text-base">
             {slide.sub}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-col gap-2.5 xs:flex-row xs:flex-wrap sm:mt-8 sm:flex-row sm:gap-3">
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 rounded-full bg-terracotta px-7 py-3 text-sm font-medium tracking-wide text-cream no-underline transition-all hover:bg-terracotta/90 hover:shadow-lg"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-terracotta px-6 py-2.5 text-sm font-medium tracking-wide text-cream no-underline transition-all hover:bg-terracotta/90 hover:shadow-lg sm:px-7 sm:py-3"
             >
               Shop Now
               <svg
@@ -145,7 +146,7 @@ export default function Hero() {
             </Link>
             <a
               href="#collections"
-              className="inline-flex items-center gap-2 rounded-full border border-cream/40 bg-cream/10 px-7 py-3 text-sm font-medium tracking-wide text-cream no-underline backdrop-blur-sm transition-all hover:bg-cream/20"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-cream/40 bg-cream/10 px-6 py-2.5 text-sm font-medium tracking-wide text-cream no-underline backdrop-blur-sm transition-all hover:bg-cream/20 sm:px-7 sm:py-3"
             >
               View Collections
             </a>
@@ -154,21 +155,21 @@ export default function Hero() {
       </div>
 
       {/* Slide indicators */}
-      <div className="absolute right-6 bottom-8 z-20 flex items-center gap-4 sm:right-12">
-        <span className="text-xs tabular-nums text-cream/50">
+      <div className="absolute bottom-5 right-5 z-20 flex items-center gap-3 sm:bottom-8 sm:right-12 sm:gap-4">
+        <span className="text-[10px] tabular-nums text-cream/50 sm:text-xs">
           {String(current + 1).padStart(2, '0')} /{' '}
           {String(displaySlides.length).padStart(2, '0')}
         </span>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 sm:gap-2">
           {displaySlides.map((_, i) => (
             <button
               key={i}
               type="button"
               aria-label={`Go to slide ${i + 1}`}
               onClick={() => setCurrent(i)}
-              className="h-1.5 rounded-full transition-all duration-300"
+              className="h-1 rounded-full transition-all duration-300 sm:h-1.5"
               style={{
-                width: i === current ? '28px' : '6px',
+                width: i === current ? '24px' : '5px',
                 backgroundColor:
                   i === current
                     ? 'var(--color-terracotta)'

@@ -57,19 +57,18 @@ export default function BrandStory() {
               {siteContent?.aboutUsConfig?.title || "Woven with intention,\nmade for every her"}
             </h2>
             <div className="mt-4 text-[13px] leading-relaxed text-cream/75 sm:mt-6 sm:text-base">
-              {siteContent?.aboutUs || (
+              {siteContent?.aboutUs ? (
+                <p>{siteContent.aboutUs}</p>
+              ) : (
                 <>
                   <p>
-                    herviva was born from a simple belief: every woman deserves a
-                    wardrobe that feels as beautiful as she is. We blend the richness
-                    of South Asian craftsmanship with clean, contemporary silhouettes
-                    — creating pieces that honour tradition while embracing the rhythm
-                    of modern life.
+                    herviva was born from a simple belief: every woman deserves clothes
+                    that feel as beautiful as she is — rooted in South Asian craft,
+                    shaped for modern life.
                   </p>
                   <p className="mt-3 sm:mt-4">
-                    From hand-selected linens to artisanal embroideries, each garment
-                    is designed to drape effortlessly, layer beautifully, and become a
-                    cherished part of your everyday story.
+                    Each garment is made with hand-selected fabrics and artisanal
+                    detail, designed to drape effortlessly and last.
                   </p>
                 </>
               )}

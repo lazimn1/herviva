@@ -40,7 +40,7 @@ export default function WishlistPage() {
             Your Wishlist
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm text-muted">
-            {wishlist.length} {wishlist.length === 1 ? 'item' : 'items'} saved for later.
+            {loading ? wishlist.length : products.length} {(loading ? wishlist.length : products.length) === 1 ? 'item' : 'items'} saved for later.
           </p>
         </div>
 

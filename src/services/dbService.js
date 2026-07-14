@@ -30,21 +30,79 @@ export const dbService = {
     }
   },
   
-  getSalesTrend: async () => {
-    // For a real app, you would query orders grouped by date. 
-    // This is a placeholder structure until date-grouping is implemented in the DB.
+  getSalesTrend: async (range = 'days') => {
     try {
-      // In a real scenario, you'd fetch last 7 days orders and reduce them by day
-      // Returning static format for the chart compatibility while connected to Supabase
-      return [
-        { name: 'Mon', sales: 4000 },
-        { name: 'Tue', sales: 3000 },
-        { name: 'Wed', sales: 5000 },
-        { name: 'Thu', sales: 2780 },
-        { name: 'Fri', sales: 8900 },
-        { name: 'Sat', sales: 6390 },
-        { name: 'Sun', sales: 7490 },
-      ];
+      const { data: orders, error } = await supabase
+        .from('orders')
+        .select('date, created_at, total');
+
+      if (error) throw error;
+
+      let startDate = new Date();
+      const buckets = [];
+      const now = new Date();
+
+      if (range === 'days') {
+        startDate.setDate(startDate.getDate() - 7);
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date(now);
+          d.setDate(d.getDate() - i);
+          buckets.push({ name: d.toLocaleDateString(undefined, { weekday: 'short' }), sales: 0 });
+        }
+      } else if (range === 'weeks') {
+        startDate.setDate(startDate.getDate() - 28);
+        for (let i = 3; i >= 0; i--) {
+          const d = new Date(now);
+          d.setDate(d.getDate() - (i * 7));
+          d.setDate(d.getDate() - d.getDay()); // Sunday start
+          buckets.push({ name: d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }), sales: 0 });
+        }
+      } else if (range === 'month') {
+        startDate.setMonth(startDate.getMonth() - 11); // Last 12 months including current
+        startDate.setDate(1); // Start of the month
+        for (let i = 11; i >= 0; i--) {
+          const d = new Date(now);
+          d.setMonth(d.getMonth() - i);
+          buckets.push({ name: d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' }), sales: 0 });
+        }
+      } else {
+        startDate.setFullYear(startDate.getFullYear() - 4); // Last 5 years including current
+        startDate.setMonth(0);
+        startDate.setDate(1);
+        for (let i = 4; i >= 0; i--) {
+          const d = new Date(now);
+          d.setFullYear(d.getFullYear() - i);
+          buckets.push({ name: d.getFullYear().toString(), sales: 0 });
+        }
+      }
+
+      const filteredOrders = (orders || []).filter(o => {
+        const orderDate = new Date(o.date || o.created_at);
+        return orderDate >= startDate;
+      });
+
+      filteredOrders.forEach(order => {
+        const d = new Date(order.date || order.created_at);
+        let key = '';
+        if (range === 'days') {
+          key = d.toLocaleDateString(undefined, { weekday: 'short' });
+        } else if (range === 'weeks') {
+          const weekStart = new Date(d);
+          weekStart.setDate(d.getDate() - d.getDay());
+          key = weekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        } else if (range === 'month') {
+          key = d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
+        } else {
+          key = d.getFullYear().toString();
+        }
+
+        const bucket = buckets.find(b => b.name === key);
+        if (bucket) {
+          bucket.sales += (Number(order.total) || 0);
+        }
+      });
+
+      return buckets;
     } catch (error) {
       console.error("Error fetching sales trend:", error);
       return [];

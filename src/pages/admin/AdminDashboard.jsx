@@ -7,20 +7,21 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [trendData, setTrendData] = useState([]);
+  const [timeRange, setTimeRange] = useState('days');
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       const [overviewStats, salesTrend] = await Promise.all([
         dbService.getOverviewStats(),
-        dbService.getSalesTrend()
+        dbService.getSalesTrend(timeRange)
       ]);
       setStats(overviewStats);
       setTrendData(salesTrend);
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [timeRange]);
 
   if (loading) {
     return (
@@ -83,7 +84,30 @@ export default function AdminDashboard() {
 
       {/* Chart Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-6">Sales Trend (Last 7 Days)</h2>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+          <h2 className="text-lg font-semibold text-gray-900">Sales Trend</h2>
+          
+          <div className="flex bg-gray-100 p-1 rounded-lg">
+            {[
+              { id: 'days', label: '7 Days' },
+              { id: 'weeks', label: '4 Weeks' },
+              { id: 'month', label: '12 Months' },
+              { id: 'year', label: '5 Years' }
+            ].map(filter => (
+              <button
+                key={filter.id}
+                onClick={() => setTimeRange(filter.id)}
+                className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                  timeRange === filter.id 
+                    ? 'bg-white text-indigo-600 shadow-sm' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={trendData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>

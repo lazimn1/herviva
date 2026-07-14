@@ -3,35 +3,41 @@ import { dbService } from '../services/dbService';
 
 const reviews = [
   {
+    id: 'rev-1',
     name: 'Priya M.',
     location: 'Mumbai',
     text: "The Sage Linen Kurta is absolutely stunning. The fabric quality is exceptional and it drapes like a dream. I've already ordered two more pieces!",
     rating: 5,
     product: 'Sage Linen Kurta',
+    avatar: 'https://ui-avatars.com/api/?name=Priya+M&background=F3EBE6&color=4A3C31',
   },
   {
+    id: 'rev-2',
     name: 'Ananya K.',
     location: 'Bangalore',
     text: 'Finally found a brand that understands fusion wear. Every piece feels premium without being over the top. herviva is my go-to for work and weekends.',
     rating: 5,
     product: 'Terracotta Flow Tunic',
+    avatar: 'https://ui-avatars.com/api/?name=Ananya+K&background=F3EBE6&color=4A3C31',
   },
   {
+    id: 'rev-3',
     name: 'Rhea S.',
     location: 'Delhi',
     text: "Wore the Burgundy Festive Set to my sister's wedding and received so many compliments. The embroidery detail is exquisite. Worth every rupee.",
     rating: 5,
     product: 'Burgundy Festive Set',
+    avatar: 'https://ui-avatars.com/api/?name=Rhea+S&background=F3EBE6&color=4A3C31',
   },
 ];
 
 function Stars({ count }) {
   return (
-    <div className="flex gap-0.5">
+    <div className="flex gap-1">
       {Array.from({ length: count }).map((_, i) => (
         <svg
           key={i}
-          className="h-3.5 w-3.5 text-terracotta"
+          className="h-4 w-4 text-[#C17767]"
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -56,39 +62,78 @@ export default function Testimonials() {
   const config = siteContent?.reviewsConfig;
   const eyebrow = config?.eyebrow || 'Love Letters';
   const title = config?.title || 'What Our Hervivas Say';
-  const displayReviews = config?.reviewsList?.length > 0 ? config.reviewsList : reviews;
+  
+  // Map over DB reviews to ensure they have an ID and an avatar
+  const displayReviews = (config?.reviewsList?.length > 0 ? config.reviewsList : reviews).map((rev, idx) => ({
+    ...rev,
+    id: rev.id || `db-rev-${idx}`,
+    avatar: rev.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(rev.name || 'User')}&background=F3EBE6&color=4A3C31`
+  }));
 
   return (
-    <section id="reviews" className="bg-burgundy/5 py-20 sm:py-28">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="mb-14 text-center">
-          <span className="text-xs tracking-[0.3em] text-sage uppercase">
+    <section id="reviews" className="bg-[#FAF9F6] py-16 sm:py-24 lg:py-32">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8">
+        
+        {/* Header */}
+        <div className="mb-10 text-center sm:mb-16">
+          <span className="text-[10px] tracking-[0.3em] text-sage uppercase sm:text-xs sm:tracking-[0.4em]">
             {eyebrow}
           </span>
-          <h2 className="mt-3 font-serif text-3xl font-medium text-ink sm:text-4xl">
+          <h2 className="mt-3 font-serif text-3xl font-medium leading-tight text-ink sm:mt-4 sm:text-4xl lg:text-5xl">
             {title}
           </h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {displayReviews.map((review, index) => (
+        {/* Mobile: Horizontal Snap Carousel | Desktop: Grid */}
+        <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-6 sm:grid sm:grid-cols-3 sm:gap-6 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {displayReviews.map((review) => (
             <blockquote
-              key={index}
-              className="flex flex-col rounded-2xl border border-cream-dark bg-cream p-7"
+              key={review.id}
+              className="flex w-[85vw] shrink-0 snap-center flex-col justify-between rounded-2xl border border-cream-dark bg-white p-6 shadow-sm transition-shadow hover:shadow-md sm:w-auto sm:p-8"
             >
-              <Stars count={review.rating} />
-              <p className="mt-5 flex-1 text-sm leading-relaxed text-ink/80 italic">
-                &ldquo;{review.text}&rdquo;
-              </p>
-              <footer className="mt-6 border-t border-cream-dark pt-5">
-                <p className="text-sm font-medium text-ink">{review.name}</p>
-                <p className="text-xs text-muted">
-                  {review.location} · {review.product}
+              <div>
+                <Stars count={review.rating || 5} />
+                <p className="mt-5 text-sm leading-relaxed text-ink/80 italic sm:text-base">
+                  &ldquo;{review.text}&rdquo;
                 </p>
+              </div>
+              
+              <footer className="mt-8 flex items-center gap-4 border-t border-cream-dark pt-5">
+                <img 
+                  src={review.avatar} 
+                  alt={review.name}
+                  className="h-10 w-10 rounded-full object-cover shadow-sm"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-ink">{review.name}</p>
+                  <p className="mt-0.5 text-[11px] text-ink/60 sm:text-xs">
+                    {review.location} · {review.product}
+                  </p>
+                </div>
               </footer>
             </blockquote>
           ))}
         </div>
+
+        {/* Action Button */}
+        <div className="mt-8 flex justify-center sm:mt-12">
+          <button 
+            type="button" 
+            className="group inline-flex items-center gap-2 rounded-full border border-burgundy bg-transparent px-6 py-2.5 text-sm font-medium tracking-wide text-burgundy transition-all hover:bg-burgundy hover:text-cream"
+          >
+            Leave a Review
+            <svg
+              className="h-4 w-4 transition-transform group-hover:translate-x-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </button>
+        </div>
+
       </div>
     </section>
   );

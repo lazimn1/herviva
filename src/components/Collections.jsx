@@ -55,56 +55,63 @@ export default function Collections() {
   const displayCollections = siteContent?.collections?.length > 0 ? siteContent.collections : defaultCollections;
 
   return (
-    <section id="collections" className="bg-cream py-20 sm:py-28">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="mb-14 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+    <section id="collections" className="bg-cream py-12 sm:py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8">
+        {/* Section header */}
+        <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:mb-14 sm:flex-row sm:items-end sm:gap-6">
           <div>
-            <span className="text-xs tracking-[0.3em] text-sage uppercase">
+            <span className="text-[10px] tracking-[0.25em] text-sage uppercase sm:text-xs sm:tracking-[0.3em]">
               Curated For You
             </span>
-            <h2 className="mt-3 font-serif text-3xl font-medium text-ink sm:text-4xl lg:text-5xl">
+            <h2 className="mt-2 font-serif text-2xl font-medium text-ink sm:mt-3 sm:text-4xl lg:text-5xl">
               Our Collections
             </h2>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-muted">
+          <p className="max-w-xs text-[13px] leading-relaxed text-muted sm:max-w-sm sm:text-sm">
             Each piece is thoughtfully designed to celebrate the modern woman —
             rooted in heritage, made for today.
           </p>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* 2-col on mobile, 2-col sm, 4-col lg */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {displayCollections.map((col, i) => (
             <Link
               key={col.title}
               to="/shop"
-              className="group relative overflow-hidden rounded-2xl no-underline"
+              className="group relative overflow-hidden rounded-xl no-underline sm:rounded-2xl"
               style={{ animationDelay: `${i * 100}ms` }}
             >
-              <div className="aspect-[3/4] overflow-hidden">
+              {/* Shorter aspect on mobile so cards don't overflow screen */}
+              <div className="aspect-[3/4] overflow-hidden sm:aspect-[3/4]">
                 <img
                   src={col.image}
                   alt={col.title}
                   onError={(e) => {
                     e.target.src = col.fallback || '/images/fallback.svg';
                   }}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />
+              {/* Stronger gradient on mobile */}
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent sm:from-ink/70 sm:via-ink/10" />
+              {/* Badge — smaller on mobile */}
               <div
-                className={`absolute top-4 left-4 rounded-full px-3 py-1 text-[10px] tracking-wider uppercase ${col.color} ${col.accent} backdrop-blur-sm`}
+                className={`absolute top-2.5 left-2.5 rounded-full px-2 py-0.5 text-[9px] tracking-wider uppercase sm:top-4 sm:left-4 sm:px-3 sm:py-1 sm:text-[10px] ${col.color} ${col.accent} backdrop-blur-sm`}
               >
                 Collection
               </div>
-              <div className="absolute right-0 bottom-0 left-0 p-5">
-                <h3 className="font-serif text-xl text-cream sm:text-2xl">
+              {/* Card text */}
+              <div className="absolute right-0 bottom-0 left-0 p-3 sm:p-5">
+                <h3 className="font-serif text-base leading-tight text-cream sm:text-2xl">
                   {col.title}
                 </h3>
-                <p className="mt-1 text-xs text-cream/70">{col.desc}</p>
-                <span className="mt-3 inline-flex items-center gap-1 text-xs tracking-wide text-cream/90 opacity-0 transition-opacity group-hover:opacity-100">
+                <p className="mt-0.5 text-[11px] text-cream/70 sm:mt-1 sm:text-xs">{col.desc}</p>
+                {/* Always visible on mobile (no hover on touch), hover-only on desktop */}
+                <span className="mt-2 inline-flex items-center gap-1 text-[11px] tracking-wide text-cream/90 opacity-100 transition-opacity sm:mt-3 sm:text-xs sm:opacity-0 sm:group-hover:opacity-100">
                   Explore
                   <svg
-                    className="h-3.5 w-3.5"
+                    className="h-3 w-3 sm:h-3.5 sm:w-3.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

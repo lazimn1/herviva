@@ -115,24 +115,6 @@ export default function Testimonials() {
           ))}
         </div>
 
-        {/* Action Button */}
-        <div className="mt-8 flex justify-center sm:mt-12">
-          <button 
-            type="button" 
-            className="group inline-flex items-center gap-2 rounded-full border border-burgundy bg-transparent px-6 py-2.5 text-sm font-medium tracking-wide text-burgundy transition-all hover:bg-burgundy hover:text-cream"
-          >
-            Leave a Review
-            <svg
-              className="h-4 w-4 transition-transform group-hover:translate-x-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </button>
-        </div>
 
       </div>
     </section>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { IndianRupee, ShoppingBag, CreditCard, AlertCircle } from 'lucide-react';
+import { IndianRupee, ShoppingBag, CreditCard, AlertCircle, FileText, Package, ShoppingCart, BookOpen } from 'lucide-react';
 import { dbService } from '../../services/dbService';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
@@ -58,6 +59,13 @@ export default function AdminDashboard() {
     }
   ];
 
+  const quickLinks = [
+    { label: 'About Us & Hero', desc: 'Edit story, images & hero slides', icon: BookOpen, to: '/admin/content', color: 'bg-purple-50 text-purple-600 border-purple-100' },
+    { label: 'Products', desc: 'Add, edit or remove products', icon: Package, to: '/admin/products', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' },
+    { label: 'Orders', desc: 'View and manage customer orders', icon: ShoppingCart, to: '/admin/orders', color: 'bg-green-50 text-green-600 border-green-100' },
+    { label: 'Site Content', desc: 'Collections, lookbook & banners', icon: FileText, to: '/admin/content', color: 'bg-orange-50 text-orange-600 border-orange-100' },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-8">
@@ -82,8 +90,33 @@ export default function AdminDashboard() {
         })}
       </div>
 
+      {/* Quick Actions */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickLinks.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                className={`flex items-start gap-3 p-4 rounded-xl border transition-all hover:shadow-md no-underline ${item.color}`}
+              >
+                <div className="mt-0.5">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">{item.label}</p>
+                  <p className="text-xs opacity-70 mt-0.5">{item.desc}</p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Chart Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-8">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
           <h2 className="text-lg font-semibold text-gray-900">Sales Trend</h2>
           
@@ -144,3 +177,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

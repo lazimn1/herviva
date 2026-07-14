@@ -443,6 +443,7 @@ export default function AdminContent() {
                   type="text"
                   value={content.aboutUsConfig?.subtitle || ''}
                   onChange={(e) => setContent(prev => ({ ...prev, aboutUsConfig: { ...prev.aboutUsConfig, subtitle: e.target.value } }))}
+                  placeholder="Our Story"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                 />
               </div>
@@ -452,6 +453,7 @@ export default function AdminContent() {
                   value={content.aboutUsConfig?.title || ''}
                   onChange={(e) => setContent(prev => ({ ...prev, aboutUsConfig: { ...prev.aboutUsConfig, title: e.target.value } }))}
                   rows={2}
+                  placeholder="Woven with intention,&#10;made for every her"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
                 />
               </div>
@@ -464,27 +466,31 @@ export default function AdminContent() {
                   type="text"
                   value={content.aboutUsConfig?.years || ''}
                   onChange={(e) => setContent(prev => ({ ...prev, aboutUsConfig: { ...prev.aboutUsConfig, years: e.target.value } }))}
+                  placeholder="8+"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Highlight Stat Text</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Highlight Stat Label</label>
                 <input 
                   type="text"
                   value={content.aboutUsConfig?.yearsText || ''}
                   onChange={(e) => setContent(prev => ({ ...prev, aboutUsConfig: { ...prev.aboutUsConfig, yearsText: e.target.value } }))}
+                  placeholder="Years of craft"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Company Description (Body)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Company Description (Body)</label>
+              <p className="text-xs text-gray-400 mb-2">This text appears in the About Us section. If left blank, the default text is shown.</p>
               <textarea 
                 name="aboutUs" 
                 value={content.aboutUs} 
                 onChange={handleChange}
                 rows={5}
+                placeholder="herviva was born from a simple belief: every woman deserves clothes that feel as beautiful as she is — rooted in South Asian craft, shaped for modern life."
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-y"
               />
             </div>

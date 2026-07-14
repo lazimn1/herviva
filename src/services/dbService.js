@@ -34,7 +34,7 @@ export const dbService = {
     try {
       const { data: orders, error } = await supabase
         .from('orders')
-        .select('date, created_at, total');
+        .select('*');
 
       if (error) throw error;
 
@@ -77,12 +77,12 @@ export const dbService = {
       }
 
       const filteredOrders = (orders || []).filter(o => {
-        const orderDate = new Date(o.date || o.created_at);
+        const orderDate = new Date(o.date || o.created_at || o.createdAt);
         return orderDate >= startDate;
       });
 
       filteredOrders.forEach(order => {
-        const d = new Date(order.date || order.created_at);
+        const d = new Date(order.date || order.created_at || order.createdAt);
         let key = '';
         if (range === 'days') {
           key = d.toLocaleDateString(undefined, { weekday: 'short' });

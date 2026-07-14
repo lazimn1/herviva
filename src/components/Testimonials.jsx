@@ -51,6 +51,8 @@ function Stars({ count }) {
 export default function Testimonials() {
   const [siteContent, setSiteContent] = useState(null);
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
   useEffect(() => {
     const fetchContent = async () => {
       const data = await dbService.getSiteContent();
@@ -70,6 +72,17 @@ export default function Testimonials() {
     avatar: rev.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(rev.name || 'User')}&background=F3EBE6&color=4A3C31`
   }));
 
+  const handleScroll = (e) => {
+    const scrollLeft = e.target.scrollLeft;
+    // Calculate which item is currently focused
+    // Assumes items take up most of the width (85vw)
+    const itemWidth = e.target.clientWidth * 0.85; 
+    const newIndex = Math.round(scrollLeft / itemWidth);
+    if (newIndex !== activeIndex && newIndex >= 0 && newIndex < displayReviews.length) {
+      setActiveIndex(newIndex);
+    }
+  };
+
   return (
     <section id="reviews" className="bg-[#FAF9F6] py-16 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-8">
@@ -85,7 +98,10 @@ export default function Testimonials() {
         </div>
 
         {/* Mobile: Horizontal Snap Carousel | Desktop: Grid */}
-        <div className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-6 sm:grid sm:grid-cols-3 sm:gap-6 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div 
+          className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-3 sm:gap-6 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          onScroll={handleScroll}
+        >
           {displayReviews.map((review) => (
             <blockquote
               key={review.id}
@@ -112,6 +128,18 @@ export default function Testimonials() {
                 </div>
               </footer>
             </blockquote>
+          ))}
+        </div>
+
+        {/* Mobile Pagination Bubbles */}
+        <div className="mt-4 flex justify-center gap-2 sm:hidden">
+          {displayReviews.map((_, index) => (
+            <div
+              key={index}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                activeIndex === index ? 'w-6 bg-burgundy' : 'w-2 bg-cream-dark/50'
+              }`}
+            />
           ))}
         </div>
 

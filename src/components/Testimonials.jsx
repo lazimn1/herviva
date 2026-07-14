@@ -97,15 +97,15 @@ export default function Testimonials() {
           </h2>
         </div>
 
-        {/* Mobile: Horizontal Snap Carousel | Desktop: Grid */}
+        {/* Unified: Horizontal Snap Carousel for ALL screens */}
         <div 
-          className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-3 sm:gap-6 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           onScroll={handleScroll}
         >
           {displayReviews.map((review) => (
             <blockquote
               key={review.id}
-              className="flex w-[85vw] shrink-0 snap-center flex-col justify-between rounded-2xl border border-cream-dark bg-white p-6 shadow-sm transition-shadow hover:shadow-md sm:w-auto sm:p-8"
+              className="flex w-[85vw] max-w-md shrink-0 snap-center flex-col justify-between rounded-2xl border border-cream-dark bg-white p-6 shadow-sm transition-shadow hover:shadow-md sm:p-8"
             >
               <div>
                 <Stars count={review.rating || 5} />
@@ -131,8 +131,8 @@ export default function Testimonials() {
           ))}
         </div>
 
-        {/* Mobile Pagination Bubbles */}
-        <div className="mt-4 flex justify-center gap-2 sm:hidden">
+        {/* Pagination Bubbles */}
+        <div className="mt-6 flex justify-center gap-2">
           {displayReviews.map((_, index) => (
             <div
               key={index}
